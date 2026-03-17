@@ -30,9 +30,12 @@ class CMakeBuild(build_ext):
         ext_fullpath = Path.cwd() / self.get_ext_fullpath(ext.name)
         extdir = ext_fullpath.parent.resolve()
 
+        import pybind11
+        pybind11_dir = pybind11.get_cmake_dir().replace("\\", "/")
         cmake_args = [
             f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={extdir}{os.sep}",
             f"-DPYTHON_EXECUTABLE={sys.executable}",
+            f"-Dpybind11_DIR={pybind11_dir}",
             "-DBUILD_TESTS=OFF",
             "-DBUILD_BINDINGS=ON",
         ]
@@ -77,6 +80,7 @@ setup(
         "plotly>=5.15",
         "dash>=2.14",
         "dash-bootstrap-components>=1.5",
+        "yfinance>=0.2.36",
     ],
     extras_require={
         "dev": [

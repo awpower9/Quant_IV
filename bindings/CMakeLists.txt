@@ -1,12 +1,15 @@
 # ── pybind11 Bindings ─────────────────────────────────────────────────────────
 
-# Find pybind11 — prefer pip-installed version via pybind11's cmake helper
-execute_process(
-    COMMAND ${PYTHON_EXECUTABLE} -m pybind11 --cmakedir
-    OUTPUT_VARIABLE pybind11_DIR
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    ERROR_QUIET
-)
+# 1. Skip searching if pybind11_DIR was already passed externally by pip/setuptools
+if(NOT pybind11_DIR)
+    execute_process(
+        # 2. Add quotes around the executable to safely handle spaces in the Windows Username
+        COMMAND "${PYTHON_EXECUTABLE}" -m pybind11 --cmakedir
+        OUTPUT_VARIABLE pybind11_DIR
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        ERROR_QUIET
+    )
+endif()
 
 # Also try the venv python if PYTHON_EXECUTABLE is not set
 if(NOT pybind11_DIR)
@@ -19,11 +22,14 @@ if(NOT pybind11_DIR)
 endif()
 
 if(pybind11_DIR)
+    file(TO_CMAKE_PATH "${pybind11_DIR}" pybind11_DIR)
     message(STATUS "Found pybind11 cmake dir: ${pybind11_DIR}")
-    find_package(pybind11 CONFIG REQUIRED PATHS ${pybind11_DIR} NO_DEFAULT_PATH)
-else()
-    find_package(pybind11 CONFIG REQUIRED)
+    # 3. Save it properly into CMake's cache so find_package handles spaces accurately
+    set(pybind11_DIR "${pybind11_DIR}" CACHE PATH "Pybind11 Config Dir" FORCE)
 endif()
+
+# 4. Use standard find_package (it will automatically and safely consume pybind11_DIR)
+find_package(pybind11 CONFIG REQUIRED)
 
 pybind11_add_module(_quantiv_engine
     module.cpp

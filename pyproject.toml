@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=64", "wheel", "pybind11>=2.11"]
+requires = ["setuptools>=64", "wheel", "pybind11>=2.11", "cmake>=3.20"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,9 +7,9 @@ name = "quantiv"
 version = "1.0.0"
 description = "Quantitative Options Pricing Platform"
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
 requires-python = ">=3.10"
-dynamic = ["dependencies"]
+dynamic = ["dependencies", "authors"]
 
 [project.optional-dependencies]
 dev = [
