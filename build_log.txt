@@ -1,0 +1,384 @@
+Using pip 25.3 from C:\Users\aahwarg\AppData\Local\Programs\Python\Python314\Lib\site-packages\pip (python 3.14)
+Obtaining file:///C:/QUANTIV_FINAL
+  Installing build dependencies: started
+  Running command installing build dependencies
+  Using pip 25.3 from C:\Users\aahwarg\AppData\Local\Programs\Python\Python314\Lib\site-packages\pip (python 3.14)
+  Collecting setuptools>=64
+    Obtaining dependency information for setuptools>=64 from https://files.pythonhosted.org/packages/9d/76/f789f7a86709c6b087c5a2f52f911838cad707cc613162401badc665acfe/setuptools-82.0.1-py3-none-any.whl.metadata
+    Using cached setuptools-82.0.1-py3-none-any.whl.metadata (6.5 kB)
+  Collecting wheel
+    Obtaining dependency information for wheel from https://files.pythonhosted.org/packages/87/22/b76d483683216dde3d67cba61fb2444be8d5be289bf628c13fc0fd90e5f9/wheel-0.46.3-py3-none-any.whl.metadata
+    Using cached wheel-0.46.3-py3-none-any.whl.metadata (2.4 kB)
+  Collecting pybind11>=2.11
+    Obtaining dependency information for pybind11>=2.11 from https://files.pythonhosted.org/packages/88/c5/e98d9c51f3d5300d5e40ad9037dd6b3b60736fd02ab68dcc98c96be7592d/pybind11-3.0.2-py3-none-any.whl.metadata
+    Using cached pybind11-3.0.2-py3-none-any.whl.metadata (10 kB)
+  Collecting packaging>=24.0 (from wheel)
+    Obtaining dependency information for packaging>=24.0 from https://files.pythonhosted.org/packages/b7/b9/c538f279a4e237a006a2c98387d081e9eb060d203d8ed34467cc0f0b9b53/packaging-26.0-py3-none-any.whl.metadata
+    Using cached packaging-26.0-py3-none-any.whl.metadata (3.3 kB)
+  Using cached setuptools-82.0.1-py3-none-any.whl (1.0 MB)
+  Using cached wheel-0.46.3-py3-none-any.whl (30 kB)
+  Using cached pybind11-3.0.2-py3-none-any.whl (310 kB)
+  Using cached packaging-26.0-py3-none-any.whl (74 kB)
+  Installing collected packages: setuptools, pybind11, packaging, wheel
+    Creating C:\Users\aahwarg\AppData\Local\Temp\pip-build-env-nlgn87bt\overlay\Scripts
+
+  Successfully installed packaging-26.0 pybind11-3.0.2 setuptools-82.0.1 wheel-0.46.3
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Running command Checking if build backend supports build_editable
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Running command Getting requirements to build editable
+  C:\Users\aahwarg\AppData\Local\Temp\pip-build-env-nlgn87bt\overlay\Lib\site-packages\setuptools\config\_apply_pyprojecttoml.py:75: _MissingDynamic: `authors` defined outside of `pyproject.toml` is ignored.
+  !!
+
+          ********************************************************************************
+          The following seems to be defined outside of `pyproject.toml`:
+
+          `authors = 'Quantiv Team'`
+
+          According to the spec (see the link below), however, setuptools CANNOT
+          consider this value unless `authors` is listed as `dynamic`.
+
+          https://packaging.python.org/en/latest/specifications/pyproject-toml/#declaring-project-metadata-the-project-table
+
+          To prevent this problem, you can list `authors` under `dynamic` or alternatively
+          remove the `[project]` table from your file and rely entirely on other means of
+          configuration.
+          ********************************************************************************
+
+  !!
+    _handle_missing_dynamic(dist, project_table)
+  C:\Users\aahwarg\AppData\Local\Temp\pip-build-env-nlgn87bt\overlay\Lib\site-packages\setuptools\config\_apply_pyprojecttoml.py:75: _MissingDynamic: `dependencies` defined outside of `pyproject.toml` is ignored.
+  !!
+
+          ********************************************************************************
+          The following seems to be defined outside of `pyproject.toml`:
+
+          `dependencies = ['numpy>=1.24', 'scipy>=1.10', 'pandas>=2.0', 'plotly>=5.15', 'dash>=2.14', 'dash-bootstrap-components>=1.5']`
+
+          According to the spec (see the link below), however, setuptools CANNOT
+          consider this value unless `dependencies` is listed as `dynamic`.
+
+          https://packaging.python.org/en/latest/specifications/pyproject-toml/#declaring-project-metadata-the-project-table
+
+          To prevent this problem, you can list `dependencies` under `dynamic` or alternatively
+          remove the `[project]` table from your file and rely entirely on other means of
+          configuration.
+          ********************************************************************************
+
+  !!
+    _handle_missing_dynamic(dist, project_table)
+  C:\Users\aahwarg\AppData\Local\Temp\pip-build-env-nlgn87bt\overlay\Lib\site-packages\setuptools\config\_apply_pyprojecttoml.py:82: SetuptoolsDeprecationWarning: `project.license` as a TOML table is deprecated
+  !!
+
+          ********************************************************************************
+          Please use a simple string containing a SPDX expression for `project.license`. You can also use `project.license-files`. (Both options available on setuptools>=77.0.0).
+
+          By 2027-Feb-18, you need to update your project and remove deprecated calls
+          or your builds will no longer be supported.
+
+          See https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license for details.
+          ********************************************************************************
+
+  !!
+    corresp(dist, value, root_dir)
+  C:\Users\aahwarg\AppData\Local\Temp\pip-build-env-nlgn87bt\overlay\Lib\site-packages\setuptools\config\_apply_pyprojecttoml.py:82: SetuptoolsWarning: `extras_require` overwritten in `pyproject.toml` (optional-dependencies)
+    corresp(dist, value, root_dir)
+  C:\Users\aahwarg\AppData\Local\Temp\pip-build-env-nlgn87bt\overlay\Lib\site-packages\setuptools\config\_apply_pyprojecttoml.py:82: SetuptoolsWarning: `install_requires` overwritten in `pyproject.toml` (dependencies)
+    corresp(dist, value, root_dir)
+  running egg_info
+  writing quantiv.egg-info\PKG-INFO
+  writing dependency_links to quantiv.egg-info\dependency_links.txt
+  writing requirements to quantiv.egg-info\requires.txt
+  writing top-level names to quantiv.egg-info\top_level.txt
+  reading manifest file 'quantiv.egg-info\SOURCES.txt'
+  writing manifest file 'quantiv.egg-info\SOURCES.txt'
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Running command Preparing editable metadata (pyproject.toml)
+  C:\Users\aahwarg\AppData\Local\Temp\pip-build-env-nlgn87bt\overlay\Lib\site-packages\setuptools\config\_apply_pyprojecttoml.py:75: _MissingDynamic: `authors` defined outside of `pyproject.toml` is ignored.
+  !!
+
+          ********************************************************************************
+          The following seems to be defined outside of `pyproject.toml`:
+
+          `authors = 'Quantiv Team'`
+
+          According to the spec (see the link below), however, setuptools CANNOT
+          consider this value unless `authors` is listed as `dynamic`.
+
+          https://packaging.python.org/en/latest/specifications/pyproject-toml/#declaring-project-metadata-the-project-table
+
+          To prevent this problem, you can list `authors` under `dynamic` or alternatively
+          remove the `[project]` table from your file and rely entirely on other means of
+          configuration.
+          ********************************************************************************
+
+  !!
+    _handle_missing_dynamic(dist, project_table)
+  C:\Users\aahwarg\AppData\Local\Temp\pip-build-env-nlgn87bt\overlay\Lib\site-packages\setuptools\config\_apply_pyprojecttoml.py:75: _MissingDynamic: `dependencies` defined outside of `pyproject.toml` is ignored.
+  !!
+
+          ********************************************************************************
+          The following seems to be defined outside of `pyproject.toml`:
+
+          `dependencies = ['numpy>=1.24', 'scipy>=1.10', 'pandas>=2.0', 'plotly>=5.15', 'dash>=2.14', 'dash-bootstrap-components>=1.5']`
+
+          According to the spec (see the link below), however, setuptools CANNOT
+          consider this value unless `dependencies` is listed as `dynamic`.
+
+          https://packaging.python.org/en/latest/specifications/pyproject-toml/#declaring-project-metadata-the-project-table
+
+          To prevent this problem, you can list `dependencies` under `dynamic` or alternatively
+          remove the `[project]` table from your file and rely entirely on other means of
+          configuration.
+          ********************************************************************************
+
+  !!
+    _handle_missing_dynamic(dist, project_table)
+  C:\Users\aahwarg\AppData\Local\Temp\pip-build-env-nlgn87bt\overlay\Lib\site-packages\setuptools\config\_apply_pyprojecttoml.py:82: SetuptoolsDeprecationWarning: `project.license` as a TOML table is deprecated
+  !!
+
+          ********************************************************************************
+          Please use a simple string containing a SPDX expression for `project.license`. You can also use `project.license-files`. (Both options available on setuptools>=77.0.0).
+
+          By 2027-Feb-18, you need to update your project and remove deprecated calls
+          or your builds will no longer be supported.
+
+          See https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license for details.
+          ********************************************************************************
+
+  !!
+    corresp(dist, value, root_dir)
+  C:\Users\aahwarg\AppData\Local\Temp\pip-build-env-nlgn87bt\overlay\Lib\site-packages\setuptools\config\_apply_pyprojecttoml.py:82: SetuptoolsWarning: `extras_require` overwritten in `pyproject.toml` (optional-dependencies)
+    corresp(dist, value, root_dir)
+  C:\Users\aahwarg\AppData\Local\Temp\pip-build-env-nlgn87bt\overlay\Lib\site-packages\setuptools\config\_apply_pyprojecttoml.py:82: SetuptoolsWarning: `install_requires` overwritten in `pyproject.toml` (dependencies)
+    corresp(dist, value, root_dir)
+  running dist_info
+  creating C:\Users\aahwarg\AppData\Local\Temp\pip-modern-metadata-khl6p4bn\quantiv.egg-info
+  writing C:\Users\aahwarg\AppData\Local\Temp\pip-modern-metadata-khl6p4bn\quantiv.egg-info\PKG-INFO
+  writing dependency_links to C:\Users\aahwarg\AppData\Local\Temp\pip-modern-metadata-khl6p4bn\quantiv.egg-info\dependency_links.txt
+  writing requirements to C:\Users\aahwarg\AppData\Local\Temp\pip-modern-metadata-khl6p4bn\quantiv.egg-info\requires.txt
+  writing top-level names to C:\Users\aahwarg\AppData\Local\Temp\pip-modern-metadata-khl6p4bn\quantiv.egg-info\top_level.txt
+  writing manifest file 'C:\Users\aahwarg\AppData\Local\Temp\pip-modern-metadata-khl6p4bn\quantiv.egg-info\SOURCES.txt'
+  reading manifest file 'C:\Users\aahwarg\AppData\Local\Temp\pip-modern-metadata-khl6p4bn\quantiv.egg-info\SOURCES.txt'
+  writing manifest file 'C:\Users\aahwarg\AppData\Local\Temp\pip-modern-metadata-khl6p4bn\quantiv.egg-info\SOURCES.txt'
+  creating 'C:\Users\aahwarg\AppData\Local\Temp\pip-modern-metadata-khl6p4bn\quantiv-1.0.0.dist-info'
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Collecting pytest>=7.0 (from quantiv==1.0.0)
+  Obtaining dependency information for pytest>=7.0 from https://files.pythonhosted.org/packages/3b/ab/b3226f0bd7cdcf710fbede2b3548584366da3b19b5021e74f5bde2a8fa3f/pytest-9.0.2-py3-none-any.whl.metadata
+  Using cached pytest-9.0.2-py3-none-any.whl.metadata (7.6 kB)
+Collecting pytest-cov>=4.0 (from quantiv==1.0.0)
+  Obtaining dependency information for pytest-cov>=4.0 from https://files.pythonhosted.org/packages/ee/49/1377b49de7d0c1ce41292161ea0f721913fa8722c19fb9c1e3aa0367eecb/pytest_cov-7.0.0-py3-none-any.whl.metadata
+  Using cached pytest_cov-7.0.0-py3-none-any.whl.metadata (31 kB)
+Collecting black>=23.0 (from quantiv==1.0.0)
+  Obtaining dependency information for black>=23.0 from https://files.pythonhosted.org/packages/ac/94/2424338fb2d1875e9e83eed4c8e9c67f6905ec25afd826a911aea2b02535/black-26.3.1-cp314-cp314-win_amd64.whl.metadata
+  Using cached black-26.3.1-cp314-cp314-win_amd64.whl.metadata (91 kB)
+Collecting mypy>=1.0 (from quantiv==1.0.0)
+  Obtaining dependency information for mypy>=1.0 from https://files.pythonhosted.org/packages/cd/09/4ebd873390a063176f06b0dbf1f7783dd87bd120eae7727fa4ae4179b685/mypy-1.19.1-cp314-cp314-win_amd64.whl.metadata
+  Using cached mypy-1.19.1-cp314-cp314-win_amd64.whl.metadata (2.3 kB)
+Collecting ruff>=0.1 (from quantiv==1.0.0)
+  Obtaining dependency information for ruff>=0.1 from https://files.pythonhosted.org/packages/89/7a/09ece68445ceac348df06e08bf75db72d0e8427765b96c9c0ffabc1be1d9/ruff-0.15.6-py3-none-win_amd64.whl.metadata
+  Using cached ruff-0.15.6-py3-none-win_amd64.whl.metadata (27 kB)
+Requirement already satisfied: click>=8.0.0 in c:\users\aahwarg\appdata\local\programs\python\python314\lib\site-packages (from black>=23.0->quantiv==1.0.0) (8.3.1)
+Collecting mypy-extensions>=0.4.3 (from black>=23.0->quantiv==1.0.0)
+  Obtaining dependency information for mypy-extensions>=0.4.3 from https://files.pythonhosted.org/packages/79/7b/2c79738432f5c924bef5071f933bcc9efd0473bac3b4aa584a6f7c1c8df8/mypy_extensions-1.1.0-py3-none-any.whl.metadata
+  Using cached mypy_extensions-1.1.0-py3-none-any.whl.metadata (1.1 kB)
+Requirement already satisfied: packaging>=22.0 in c:\users\aahwarg\appdata\local\programs\python\python314\lib\site-packages (from black>=23.0->quantiv==1.0.0) (26.0)
+Collecting pathspec>=1.0.0 (from black>=23.0->quantiv==1.0.0)
+  Obtaining dependency information for pathspec>=1.0.0 from https://files.pythonhosted.org/packages/ef/3c/2c197d226f9ea224a9ab8d197933f9da0ae0aac5b6e0f884e2b8d9c8e9f7/pathspec-1.0.4-py3-none-any.whl.metadata
+  Using cached pathspec-1.0.4-py3-none-any.whl.metadata (13 kB)
+Requirement already satisfied: platformdirs>=2 in c:\users\aahwarg\appdata\local\programs\python\python314\lib\site-packages (from black>=23.0->quantiv==1.0.0) (4.5.1)
+Collecting pytokens~=0.4.0 (from black>=23.0->quantiv==1.0.0)
+  Obtaining dependency information for pytokens~=0.4.0 from https://files.pythonhosted.org/packages/79/37/482e55fa1602e0a7ff012661d8c946bafdc05e480ea5a32f4f7e336d4aa9/pytokens-0.4.1-cp314-cp314-win_amd64.whl.metadata
+  Using cached pytokens-0.4.1-cp314-cp314-win_amd64.whl.metadata (3.9 kB)
+Requirement already satisfied: colorama in c:\users\aahwarg\appdata\local\programs\python\python314\lib\site-packages (from click>=8.0.0->black>=23.0->quantiv==1.0.0) (0.4.6)
+Requirement already satisfied: typing_extensions>=4.6.0 in c:\users\aahwarg\appdata\local\programs\python\python314\lib\site-packages (from mypy>=1.0->quantiv==1.0.0) (4.15.0)
+Collecting librt>=0.6.2 (from mypy>=1.0->quantiv==1.0.0)
+  Obtaining dependency information for librt>=0.6.2 from https://files.pythonhosted.org/packages/a0/76/cd4d010ab2147339ca2b93e959c3686e964edc6de66ddacc935c325883d7/librt-0.8.1-cp314-cp314-win_amd64.whl.metadata
+  Using cached librt-0.8.1-cp314-cp314-win_amd64.whl.metadata (1.4 kB)
+Collecting iniconfig>=1.0.1 (from pytest>=7.0->quantiv==1.0.0)
+  Obtaining dependency information for iniconfig>=1.0.1 from https://files.pythonhosted.org/packages/cb/b1/3846dd7f199d53cb17f49cba7e651e9ce294d8497c8c150530ed11865bb8/iniconfig-2.3.0-py3-none-any.whl.metadata
+  Using cached iniconfig-2.3.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting pluggy<2,>=1.5 (from pytest>=7.0->quantiv==1.0.0)
+  Obtaining dependency information for pluggy<2,>=1.5 from https://files.pythonhosted.org/packages/54/20/4d324d65cc6d9205fabedc306948156824eb9f0ee1633355a8f7ec5c66bf/pluggy-1.6.0-py3-none-any.whl.metadata
+  Using cached pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+Collecting pygments>=2.7.2 (from pytest>=7.0->quantiv==1.0.0)
+  Obtaining dependency information for pygments>=2.7.2 from https://files.pythonhosted.org/packages/c7/21/705964c7812476f378728bdf590ca4b771ec72385c533964653c68e86bdc/pygments-2.19.2-py3-none-any.whl.metadata
+  Using cached pygments-2.19.2-py3-none-any.whl.metadata (2.5 kB)
+Collecting coverage>=7.10.6 (from coverage[toml]>=7.10.6->pytest-cov>=4.0->quantiv==1.0.0)
+  Obtaining dependency information for coverage>=7.10.6 from https://files.pythonhosted.org/packages/8d/b7/4758d4f73fb536347cc5e4ad63662f9d60ba9118cb6785e9616b2ce5d7fa/coverage-7.13.5-cp314-cp314-win_amd64.whl.metadata
+  Using cached coverage-7.13.5-cp314-cp314-win_amd64.whl.metadata (8.7 kB)
+Using cached black-26.3.1-cp314-cp314-win_amd64.whl (1.4 MB)
+Using cached pytokens-0.4.1-cp314-cp314-win_amd64.whl (104 kB)
+Using cached mypy-1.19.1-cp314-cp314-win_amd64.whl (10.3 MB)
+Using cached librt-0.8.1-cp314-cp314-win_amd64.whl (57 kB)
+Using cached mypy_extensions-1.1.0-py3-none-any.whl (5.0 kB)
+Using cached pathspec-1.0.4-py3-none-any.whl (55 kB)
+Using cached pytest-9.0.2-py3-none-any.whl (374 kB)
+Using cached pluggy-1.6.0-py3-none-any.whl (20 kB)
+Using cached iniconfig-2.3.0-py3-none-any.whl (7.5 kB)
+Using cached pygments-2.19.2-py3-none-any.whl (1.2 MB)
+Using cached pytest_cov-7.0.0-py3-none-any.whl (22 kB)
+Using cached coverage-7.13.5-cp314-cp314-win_amd64.whl (223 kB)
+Using cached ruff-0.15.6-py3-none-win_amd64.whl (11.8 MB)
+Building wheels for collected packages: quantiv
+  Building editable for quantiv (pyproject.toml): started
+  Running command Building editable for quantiv (pyproject.toml)
+  C:\Users\aahwarg\AppData\Local\Temp\pip-build-env-nlgn87bt\overlay\Lib\site-packages\setuptools\config\_apply_pyprojecttoml.py:75: _MissingDynamic: `authors` defined outside of `pyproject.toml` is ignored.
+  !!
+
+          ********************************************************************************
+          The following seems to be defined outside of `pyproject.toml`:
+
+          `authors = 'Quantiv Team'`
+
+          According to the spec (see the link below), however, setuptools CANNOT
+          consider this value unless `authors` is listed as `dynamic`.
+
+          https://packaging.python.org/en/latest/specifications/pyproject-toml/#declaring-project-metadata-the-project-table
+
+          To prevent this problem, you can list `authors` under `dynamic` or alternatively
+          remove the `[project]` table from your file and rely entirely on other means of
+          configuration.
+          ********************************************************************************
+
+  !!
+    _handle_missing_dynamic(dist, project_table)
+  C:\Users\aahwarg\AppData\Local\Temp\pip-build-env-nlgn87bt\overlay\Lib\site-packages\setuptools\config\_apply_pyprojecttoml.py:75: _MissingDynamic: `dependencies` defined outside of `pyproject.toml` is ignored.
+  !!
+
+          ********************************************************************************
+          The following seems to be defined outside of `pyproject.toml`:
+
+          `dependencies = ['numpy>=1.24', 'scipy>=1.10', 'pandas>=2.0', 'plotly>=5.15', 'dash>=2.14', 'dash-bootstrap-components>=1.5']`
+
+          According to the spec (see the link below), however, setuptools CANNOT
+          consider this value unless `dependencies` is listed as `dynamic`.
+
+          https://packaging.python.org/en/latest/specifications/pyproject-toml/#declaring-project-metadata-the-project-table
+
+          To prevent this problem, you can list `dependencies` under `dynamic` or alternatively
+          remove the `[project]` table from your file and rely entirely on other means of
+          configuration.
+          ********************************************************************************
+
+  !!
+    _handle_missing_dynamic(dist, project_table)
+  C:\Users\aahwarg\AppData\Local\Temp\pip-build-env-nlgn87bt\overlay\Lib\site-packages\setuptools\config\_apply_pyprojecttoml.py:82: SetuptoolsDeprecationWarning: `project.license` as a TOML table is deprecated
+  !!
+
+          ********************************************************************************
+          Please use a simple string containing a SPDX expression for `project.license`. You can also use `project.license-files`. (Both options available on setuptools>=77.0.0).
+
+          By 2027-Feb-18, you need to update your project and remove deprecated calls
+          or your builds will no longer be supported.
+
+          See https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license for details.
+          ********************************************************************************
+
+  !!
+    corresp(dist, value, root_dir)
+  C:\Users\aahwarg\AppData\Local\Temp\pip-build-env-nlgn87bt\overlay\Lib\site-packages\setuptools\config\_apply_pyprojecttoml.py:82: SetuptoolsWarning: `extras_require` overwritten in `pyproject.toml` (optional-dependencies)
+    corresp(dist, value, root_dir)
+  C:\Users\aahwarg\AppData\Local\Temp\pip-build-env-nlgn87bt\overlay\Lib\site-packages\setuptools\config\_apply_pyprojecttoml.py:82: SetuptoolsWarning: `install_requires` overwritten in `pyproject.toml` (dependencies)
+    corresp(dist, value, root_dir)
+  running editable_wheel
+  creating C:\Users\aahwarg\AppData\Local\Temp\pip-ephem-wheel-cache-zts0tsuo\wheels\6d\5b\e8\6a57128f4ec7d96450433ffbba2d51b8e0cc859fa49f8078a6\tmptc6alx40\.tmp-rf44k9mp\quantiv.egg-info
+  writing C:\Users\aahwarg\AppData\Local\Temp\pip-ephem-wheel-cache-zts0tsuo\wheels\6d\5b\e8\6a57128f4ec7d96450433ffbba2d51b8e0cc859fa49f8078a6\tmptc6alx40\.tmp-rf44k9mp\quantiv.egg-info\PKG-INFO
+  writing dependency_links to C:\Users\aahwarg\AppData\Local\Temp\pip-ephem-wheel-cache-zts0tsuo\wheels\6d\5b\e8\6a57128f4ec7d96450433ffbba2d51b8e0cc859fa49f8078a6\tmptc6alx40\.tmp-rf44k9mp\quantiv.egg-info\dependency_links.txt
+  writing requirements to C:\Users\aahwarg\AppData\Local\Temp\pip-ephem-wheel-cache-zts0tsuo\wheels\6d\5b\e8\6a57128f4ec7d96450433ffbba2d51b8e0cc859fa49f8078a6\tmptc6alx40\.tmp-rf44k9mp\quantiv.egg-info\requires.txt
+  writing top-level names to C:\Users\aahwarg\AppData\Local\Temp\pip-ephem-wheel-cache-zts0tsuo\wheels\6d\5b\e8\6a57128f4ec7d96450433ffbba2d51b8e0cc859fa49f8078a6\tmptc6alx40\.tmp-rf44k9mp\quantiv.egg-info\top_level.txt
+  writing manifest file 'C:\Users\aahwarg\AppData\Local\Temp\pip-ephem-wheel-cache-zts0tsuo\wheels\6d\5b\e8\6a57128f4ec7d96450433ffbba2d51b8e0cc859fa49f8078a6\tmptc6alx40\.tmp-rf44k9mp\quantiv.egg-info\SOURCES.txt'
+  reading manifest file 'C:\Users\aahwarg\AppData\Local\Temp\pip-ephem-wheel-cache-zts0tsuo\wheels\6d\5b\e8\6a57128f4ec7d96450433ffbba2d51b8e0cc859fa49f8078a6\tmptc6alx40\.tmp-rf44k9mp\quantiv.egg-info\SOURCES.txt'
+  writing manifest file 'C:\Users\aahwarg\AppData\Local\Temp\pip-ephem-wheel-cache-zts0tsuo\wheels\6d\5b\e8\6a57128f4ec7d96450433ffbba2d51b8e0cc859fa49f8078a6\tmptc6alx40\.tmp-rf44k9mp\quantiv.egg-info\SOURCES.txt'
+  creating 'C:\Users\aahwarg\AppData\Local\Temp\pip-ephem-wheel-cache-zts0tsuo\wheels\6d\5b\e8\6a57128f4ec7d96450433ffbba2d51b8e0cc859fa49f8078a6\tmptc6alx40\.tmp-rf44k9mp\quantiv-1.0.0.dist-info'
+  creating C:\Users\aahwarg\AppData\Local\Temp\pip-ephem-wheel-cache-zts0tsuo\wheels\6d\5b\e8\6a57128f4ec7d96450433ffbba2d51b8e0cc859fa49f8078a6\tmptc6alx40\.tmp-rf44k9mp\quantiv-1.0.0.dist-info\WHEEL
+  running build_py
+  running build_ext
+  -- Building for: Visual Studio 18 2026
+  -- Selecting Windows SDK version 10.0.26100.0 to target Windows 10.0.26200.
+  -- The CXX compiler identification is MSVC 19.50.35721.0
+  -- Detecting CXX compiler ABI info
+  -- Detecting CXX compiler ABI info - done
+  -- Check for working CXX compiler: C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/VC/Tools/MSVC/14.50.35717/bin/Hostx64/x64/cl.exe - skipped
+  -- Detecting CXX compile features
+  -- Detecting CXX compile features - done
+  -- Found pybind11 cmake dir: C:\Users\aahwarg\AppData\Local\Temp\pip-build-env-nlgn87bt\overlay\Lib\site-packages\pybind11\share\cmake\pybind11
+  CMake Warning (dev) at C:/Users/aahwarg/AppData/Local/Temp/pip-build-env-nlgn87bt/overlay/Lib/site-packages/pybind11/share/cmake/pybind11/FindPythonLibsNew.cmake:101 (message):
+    Policy CMP0148 is not set: The FindPythonInterp and FindPythonLibs modules
+    are removed.  Run "cmake --help-policy CMP0148" for policy details.  Use
+    the cmake_policy command to set the policy and suppress this warning, or
+    preferably upgrade to using FindPython, either by calling it explicitly
+    before pybind11, or by setting PYBIND11_FINDPYTHON ON before pybind11.
+  Call Stack (most recent call first):
+    C:/Users/aahwarg/AppData/Local/Temp/pip-build-env-nlgn87bt/overlay/Lib/site-packages/pybind11/share/cmake/pybind11/pybind11Tools.cmake:44 (find_package)
+    C:/Users/aahwarg/AppData/Local/Temp/pip-build-env-nlgn87bt/overlay/Lib/site-packages/pybind11/share/cmake/pybind11/pybind11Common.cmake:237 (include)
+    C:/Users/aahwarg/AppData/Local/Temp/pip-build-env-nlgn87bt/overlay/Lib/site-packages/pybind11/share/cmake/pybind11/pybind11Config.cmake:257 (include)
+    bindings/CMakeLists.txt:23 (find_package)
+  This warning is for project developers.  Use -Wno-dev to suppress it.
+
+  -- Found PythonInterp: C:/Users/aahwarg/AppData/Local/Programs/Python/Python314/python.exe (found suitable version "3.14.2", minimum required is "3.8")
+  -- Found PythonLibs: C:/Users/aahwarg/AppData/Local/Programs/Python/Python314/libs/python314.lib
+  -- Performing Test HAS_MSVC_GL_LTCG
+  -- Performing Test HAS_MSVC_GL_LTCG - Success
+  -- Found pybind11: C:/Users/aahwarg/AppData/Local/Temp/pip-build-env-nlgn87bt/overlay/Lib/site-packages/pybind11/include (found version "3.0.2")
+  -- Configuring done (4.2s)
+  -- Generating done (0.1s)
+  -- Build files have been written to: C:/Users/aahwarg/AppData/Local/Temp/tmpo3jkhu3e.build-temp/Release/quantiv._quantiv_engine
+  MSBuild version 18.0.5+e22287bf1 for .NET Framework
+
+  C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\MSBuild\Microsoft\VC\v180\Microsoft.CppBuild.targets(558,5): warning MSB8029: The Intermediate directory or Output directory cannot reside under the Temporary directory as it could lead to issues with incremental build. [C:\Users\aahwarg\AppData\Local\Temp\tmpo3jkhu3e.build-temp\Release\quantiv._quantiv_engine\ZERO_CHECK.vcxproj]
+    1>Checking Build System
+  C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\MSBuild\Microsoft\VC\v180\Microsoft.CppBuild.targets(558,5): warning MSB8029: The Intermediate directory or Output directory cannot reside under the Temporary directory as it could lead to issues with incremental build. [C:\Users\aahwarg\AppData\Local\Temp\tmpo3jkhu3e.build-temp\Release\quantiv._quantiv_engine\engine\quantiv_engine.vcxproj]
+    Building Custom Rule C:/QUANTIV_FINAL/engine/CMakeLists.txt
+    option.cpp
+    black_scholes.cpp
+    binomial.cpp
+    trinomial.cpp
+  C:\QUANTIV_FINAL\engine\src\models\trinomial.cpp(33,12): warning C4189: 'm': local variable is initialized but not referenced [C:\Users\aahwarg\AppData\Local\Temp\tmpo3jkhu3e.build-temp\Release\quantiv._quantiv_engine\engine\quantiv_engine.vcxproj]
+    monte_carlo.cpp
+    greeks_engine.cpp
+    implied_vol.cpp
+    math_utils.cpp
+    Generating Code...
+    quantiv_engine.vcxproj -> C:\Users\aahwarg\AppData\Local\Temp\tmpo3jkhu3e.build-temp\Release\quantiv._quantiv_engine\lib\Release\quantiv_engine.lib
+  C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\MSBuild\Microsoft\VC\v180\Microsoft.CppBuild.targets(558,5): warning MSB8029: The Intermediate directory or Output directory cannot reside under the Temporary directory as it could lead to issues with incremental build. [C:\Users\aahwarg\AppData\Local\Temp\tmpo3jkhu3e.build-temp\Release\quantiv._quantiv_engine\bindings\_quantiv_engine.vcxproj]
+    Building Custom Rule C:/QUANTIV_FINAL/bindings/CMakeLists.txt
+    module.cpp
+    bind_option.cpp
+    bind_black_scholes.cpp
+    bind_binomial.cpp
+    bind_trinomial.cpp
+    bind_monte_carlo.cpp
+    bind_greeks.cpp
+    bind_solvers.cpp
+       Creating library C:/Users/aahwarg/AppData/Local/Temp/tmpo3jkhu3e.build-temp/Release/quantiv._quantiv_engine/lib/Release/_quantiv_engine.lib and object C:/Users/aahwarg/AppData/Local/Temp/tmpo3jkhu3e.build-temp/Release/quantiv._quantiv_engine/lib/Release/_quantiv_engine.exp
+    Generating code
+    Finished generating code
+    _quantiv_engine.vcxproj -> C:\Users\aahwarg\AppData\Local\Temp\tmpo3jkhu3e.build-temp\Release\quantiv._quantiv_engine\lib\Release\_quantiv_engine.cp314-win_amd64.pyd
+  C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\MSBuild\Microsoft\VC\v180\Microsoft.CppBuild.targets(558,5): warning MSB8029: The Intermediate directory or Output directory cannot reside under the Temporary directory as it could lead to issues with incremental build. [C:\Users\aahwarg\AppData\Local\Temp\tmpo3jkhu3e.build-temp\Release\quantiv._quantiv_engine\ALL_BUILD.vcxproj]
+    Building Custom Rule C:/QUANTIV_FINAL/CMakeLists.txt
+  error: can't copy 'C:\Users\aahwarg\AppData\Local\Temp\tmpfts6guli.build-lib\quantiv\_quantiv_engine.cp314-win_amd64.pyd': doesn't exist or not a regular file
+  error: subprocess-exited-with-error
+  
+  Building editable for quantiv (pyproject.toml) did not run successfully.
+  exit code: 1
+  
+  No available output.
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+  full command: 'C:\Users\aahwarg\AppData\Local\Programs\Python\Python314\python.exe' 'C:\Users\aahwarg\AppData\Local\Programs\Python\Python314\Lib\site-packages\pip\_vendor\pyproject_hooks\_in_process\_in_process.py' build_editable 'C:\Users\aahwarg\AppData\Local\Temp\tmp728kzq8b'
+  cwd: C:\QUANTIV_FINAL
+  Building editable for quantiv (pyproject.toml): finished with status 'error'
+  ERROR: Failed building editable for quantiv
+Failed to build quantiv
+
+[notice] A new release of pip is available: 25.3 -> 26.0.1
+[notice] To update, run: python.exe -m pip install --upgrade pip
+error: failed-wheel-build-for-install
+
+Failed to build installable wheels for some pyproject.toml based projects
+
+quantiv

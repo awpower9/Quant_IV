@@ -1,0 +1,54 @@
+/* ── Quantiv Dashboard Global Styles ──────────────────────────────────────── */
+
+:root {
+    --primary: #00d4ff;
+    --bg-dark: #0d1117;
+    --bg-card: #161b22;
+    --text-primary: #e6edf3;
+    --text-muted: #8b949e;
+    --border: #30363d;
+    --success: #3fb950;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.navbar {
+    border-bottom: 1px solid var(--border);
+}
+
+.text-success {
+    color: var(--success) !important;
+}
+
+.shadow-sm {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* ── Slider customization ────────────────────────────────────────────────── */
+.rc-slider-track {
+    background-color: var(--primary) !important;
+}
+
+.rc-slider-handle {
+    border-color: var(--primary) !important;
+}
+
+/* ── Table styles ────────────────────────────────────────────────────────── */
+.table-dark {
+    --bs-table-bg: transparent;
+}
+
+.table-dark th {
+    color: var(--primary);
+    font-weight: 600;
+}
