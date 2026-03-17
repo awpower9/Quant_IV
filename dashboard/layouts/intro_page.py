@@ -61,7 +61,7 @@ Now that you securely know the basics, head to the **Models** page. Play around 
                 dbc.CardBody([
                     dcc.Markdown(intro_markdown, mathjax=True)
                 ])
-            ], className="shadow-sm p-4 mb-5 border-0 bg-dark text-light"),
+            ], className="shadow-sm p-4 mb-5"),
             
             html.Div([
                 dbc.Button("Start Pricing Models →", href="/models", color="primary", size="lg")
