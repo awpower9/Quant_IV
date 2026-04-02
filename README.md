@@ -1,4 +1,4 @@
-# Quantiv — Quantitative Options Pricing Platform
+# QuantIV — Quantitative Options Pricing Platform
 
 A high-performance options pricing platform with a **C++ engine**, **pybind11 bridge**, **Python analytics layer**, and **Plotly Dash UI**.
 
@@ -32,7 +32,7 @@ Dash UI  →  Python Analytics  →  pybind11 Bindings  →  C++ Engine
 ```bash
 # Create virtual environment
 python -m venv .venv
-.venv\Scripts\activate          # Windows
+source .venv\Scripts\activate          # Windows
 # source .venv/bin/activate     # Linux/macOS
 
 # Install (builds C++ extension automatically)

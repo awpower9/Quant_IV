@@ -1,4 +1,4 @@
-/* ── Quantiv Dashboard Global Styles ──────────────────────────────────────── */
+/* ── QuantIV Dashboard Global Styles ──────────────────────────────────────── */
 
 :root {
     --primary: #00d4ff;
@@ -51,4 +51,100 @@ body {
 .table-dark th {
     color: var(--primary);
     font-weight: 600;
+}
+
+/* ── Model Compare Page ──────────────────────────────────────────────────── */
+
+.mc-page-title {
+    color: var(--primary);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.mc-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+    transition: border-color 0.2s ease;
+}
+
+.mc-card:hover {
+    border-color: var(--primary);
+}
+
+.mc-card-title {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.mc-hr {
+    border-color: var(--border);
+    opacity: 0.5;
+}
+
+.mc-label {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.mc-input {
+    background: var(--bg-dark) !important;
+    border-color: var(--border) !important;
+    color: var(--text-primary) !important;
+}
+
+.mc-btn-track {
+    background: linear-gradient(135deg, #00d4ff, #0098b3) !important;
+    border: none !important;
+    font-weight: 600;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mc-btn-track:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(0, 212, 255, 0.35);
+}
+
+.mc-model-checklist .form-check {
+    padding: 6px 0;
+}
+
+.mc-model-checklist .form-check-label {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.mc-radio .form-check-label {
+    color: var(--text-primary);
+}
+
+.mc-symbol {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.mc-spot-price {
+    color: var(--success);
+    font-weight: 700;
+    font-size: 2rem;
+}
+
+.mc-table {
+    --bs-table-bg: transparent;
+}
+
+.mc-table th {
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.mc-table td {
+    vertical-align: middle;
+    font-size: 0.95rem;
 }

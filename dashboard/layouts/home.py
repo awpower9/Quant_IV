@@ -12,7 +12,7 @@ def home_layout() -> html.Div:
         dbc.Container([
             dbc.Row([
                 dbc.Col([
-                    html.H1("⚡ Quantiv", className="display-3 fw-bold"),
+                    html.H1("⚡ QuantIV", className="display-3 fw-bold"),
                     html.P(
                         "High-performance options pricing powered by C++",
                         className="lead text-muted",

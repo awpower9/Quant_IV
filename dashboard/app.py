@@ -14,6 +14,7 @@ from dashboard.layouts.greeks_page import greeks_layout
 from dashboard.layouts.surface_page import surface_layout
 from dashboard.layouts.strategy_page import strategy_layout
 from dashboard.layouts.live_page import live_layout
+from dashboard.layouts.model_compare_page import model_compare_layout
 from dashboard.components.navbar import create_navbar
 
 # ── App Initialization ───────────────────────────────────────────────────────
@@ -22,7 +23,7 @@ app = dash.Dash(
     __name__,
     external_stylesheets=[dbc.themes.CYBORG],
     suppress_callback_exceptions=True,
-    title="Quantiv — Options Pricing Platform",
+    title="QuantIV — Options Pricing Platform",
     meta_tags=[
         {"name": "description",
          "content": "Quantitative options pricing with C++ performance"},
@@ -72,6 +73,8 @@ def display_page(pathname: str, search: str = ""):
         return strategy_layout()
     elif pathname == "/live":
         return live_layout()
+    elif pathname == "/compare":
+        return model_compare_layout()
     else:
         return home_layout()
 
@@ -84,6 +87,7 @@ import dashboard.callbacks.greeks_callbacks   # noqa: F401, E402
 import dashboard.callbacks.surface_callbacks  # noqa: F401, E402
 import dashboard.callbacks.strategy_callbacks # noqa: F401, E402
 import dashboard.callbacks.live_callbacks     # noqa: F401, E402
+import dashboard.callbacks.model_compare_callbacks  # noqa: F401, E402
 
 
 if __name__ == "__main__":
