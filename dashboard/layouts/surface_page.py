@@ -9,7 +9,7 @@ from dash import html, dcc
 def surface_layout() -> html.Div:
     """Create the volatility surface page layout."""
     return html.Div([
-        html.H2("Implied Volatility Surface", className="mb-4"),
+        html.H2("Implied Volatility Surface", className="text-neon mb-4"),
 
         dbc.Row([
             dbc.Col([
@@ -31,11 +31,15 @@ def surface_layout() -> html.Div:
                                     marks=None, tooltip={"placement": "bottom"}),
                     dbc.Button("Build Surface", id="surface-build-btn",
                                color="primary", className="mt-3 w-100"),
-                ]), className="shadow-sm"),
+                ]), className="glass-card"),
             ], md=3),
 
             dbc.Col([
-                dcc.Graph(id="surface-3d-chart", style={"height": "600px"}),
+                dcc.Graph(
+                   id="surface-3d-chart", 
+                   style={"height": "600px"}, 
+                    responsive=True,className="glass-card"
+                ),
             ], md=9),
         ]),
 

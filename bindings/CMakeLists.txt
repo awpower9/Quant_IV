@@ -3,7 +3,7 @@
 # 1. Skip searching if pybind11_DIR was already passed externally by pip/setuptools
 if(NOT pybind11_DIR)
     execute_process(
-        # 2. Add quotes around the executable to safely handle spaces in the Windows Username
+        # 2. Add quotes around the executable to safely handle spaces
         COMMAND "${PYTHON_EXECUTABLE}" -m pybind11 --cmakedir
         OUTPUT_VARIABLE pybind11_DIR
         OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -11,10 +11,10 @@ if(NOT pybind11_DIR)
     )
 endif()
 
-# Also try the venv python if PYTHON_EXECUTABLE is not set
+# Also try the venv python3 if PYTHON_EXECUTABLE is not set
 if(NOT pybind11_DIR)
     execute_process(
-        COMMAND python -m pybind11 --cmakedir
+        COMMAND python3 -m pybind11 --cmakedir # <-- Changed to python3 for macOS
         OUTPUT_VARIABLE pybind11_DIR
         OUTPUT_STRIP_TRAILING_WHITESPACE
         ERROR_QUIET
@@ -40,6 +40,7 @@ pybind11_add_module(_quantiv_engine
     bind_monte_carlo.cpp
     bind_greeks.cpp
     bind_solvers.cpp
+    bind_portfolio.cpp  # <-- ADDED THIS!
 )
 
 target_link_libraries(_quantiv_engine PRIVATE quantiv_engine)

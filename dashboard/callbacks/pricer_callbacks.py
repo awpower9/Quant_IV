@@ -1,8 +1,5 @@
 """
 pricer_callbacks.py — Callbacks for the option pricer page.
-
-These callbacks link the Dash UI to the quantiv.pricing layer.
-They NEVER import _quantiv_engine directly.
 """
 
 import dash
@@ -11,38 +8,53 @@ import plotly.graph_objects as go
 
 from quantiv.pricing import Pricer
 from quantiv.utils.formatting import format_price, format_greeks
+from quantiv import _quantiv_engine
 
 pricer = Pricer()
+engine = _quantiv_engine.QuantivPortfolioEngine()
 
 
 @dash.callback(
     Output("pricer-price-output", "children"),
     Output("pricer-greeks-output", "children"),
     Output("pricer-convergence-chart", "figure"),
-    Input("pricer-spot", "value"),
-    Input("pricer-strike", "value"),
-    Input("pricer-vol", "value"),
-    Input("pricer-rate", "value"),
-    Input("pricer-expiry", "value"),
-    Input("pricer-model", "value"),
-    Input("pricer-option-type", "value"),
+    Input("btn-calculate-pricer", "n_clicks"),     # <--- ONLY THIS TRIGGERS THE CALLBACK NOW!
+    State("pricer-spot", "value"),                 # <--- CHANGED TO STATE
+    State("pricer-strike", "value"),               # <--- CHANGED TO STATE
+    State("pricer-vol", "value"),                  # <--- CHANGED TO STATE
+    State("pricer-rate", "value"),                 # <--- CHANGED TO STATE
+    State("pricer-expiry", "value"),               # <--- CHANGED TO STATE
+    State("pricer-model", "value"),                # <--- CHANGED TO STATE
+    State("pricer-option-type", "value"),          # <--- CHANGED TO STATE
+    State("session-user", "data")
 )
-def update_price(spot, strike, vol_pct, rate_pct, expiry, model, option_type):
-    """Compute option price and update display."""
+def update_price(n_clicks, spot, strike, vol_pct, rate_pct, expiry, model, option_type, username):
+    """Compute option price, manage credits, and update display ONLY on button click."""
+    
+    # 1. Prevent calculation when the page first loads
+    if n_clicks is None:
+        fig = go.Figure()
+        fig.add_annotation(
+            text="Click 'Calculate' to run models & generate charts.", 
+            xref="paper", yref="paper", x=0.5, y=0.5, showarrow=False, 
+            font=dict(size=16, color="#94a3b8")
+        )
+        fig.update_layout(template="plotly_dark", height=400, xaxis=dict(visible=False), yaxis=dict(visible=False))
+        return "---", html.P("Awaiting execution...", className="text-muted"), fig
+
     try:
         vol = vol_pct / 100.0
         rate = rate_pct / 100.0
 
+        # Calculate the basic Price & Greeks
         result = pricer.price(
             model=model, spot=spot, strike=strike,
             vol=vol, rate=rate, expiry=expiry,
             option_type=option_type,
         )
 
-        # Format price
         price_text = format_price(result.price)
 
-        # Format Greeks
         greeks_div = html.Div([
             html.Table([
                 html.Thead(html.Tr([html.Th("Greek"), html.Th("Value")])),
@@ -53,8 +65,32 @@ def update_price(spot, strike, vol_pct, rate_pct, expiry, model, option_type):
             ], className="table table-sm table-dark")
         ]) if result.greeks else html.P("No Greeks available for this model.")
 
-        # Convergence chart: price vs. steps (for tree models)
+
+        # 2. VISUALS & CREDITS PAYWALL LOGIC
         fig = go.Figure()
+        
+        # Check if they are logged in
+        if not username:
+            fig.add_annotation(
+                text="🔒 Please log in via the Portfolio tab to view charts.", 
+                xref="paper", yref="paper", x=0.5, y=0.5, showarrow=False, 
+                font=dict(size=16, color="#ff4f6d")
+            )
+            fig.update_layout(template="plotly_dark", height=400, xaxis=dict(visible=False), yaxis=dict(visible=False))
+            return price_text, greeks_div, fig
+            
+        # Check if they have credits (Deducts 1 credit automatically!)
+        if not engine.use_advanced_feature(username):
+            fig.add_annotation(
+                text="⚡ Out of credits! Please upgrade your plan to view charts.", 
+                xref="paper", yref="paper", x=0.5, y=0.5, showarrow=False, 
+                font=dict(size=16, color="#f5c542")
+            )
+            fig.update_layout(template="plotly_dark", height=400, xaxis=dict(visible=False), yaxis=dict(visible=False))
+            return price_text, greeks_div, fig
+
+
+        # 3. Generate the actual chart if they passed the credit checks
         if model in ("binomial", "trinomial", "bopm"):
             steps_range = list(range(10, 201, 10))
             prices = []
@@ -73,7 +109,6 @@ def update_price(spot, strike, vol_pct, rate_pct, expiry, model, option_type):
                 line=dict(color="#00d4ff"),
             ))
 
-            # Add BSM reference line
             bsm_result = pricer.price(
                 model="bsm", spot=spot, strike=strike,
                 vol=vol, rate=rate, expiry=expiry,
@@ -96,10 +131,14 @@ def update_price(spot, strike, vol_pct, rate_pct, expiry, model, option_type):
     except Exception as e:
         return str(e), html.P(f"Error: {e}"), go.Figure()
 
+
+# ... (Keep MODEL_DESCRIPTIONS and the update_model_description callback here!) ...
+
+
 # ── Dynamic Model Descriptions ──────────────────────────────────────────────
 
 MODEL_DESCRIPTIONS = {
-    "bsm": r"""
+    "bsm": r'''
 ### 📈 Black-Scholes-Merton (BSM) Model
 The **Black-Scholes-Merton** model is the granddaddy of all option pricing. It uses one massive, elegant math equation to instantly spit out the exact "fair price" of an option. 
 
@@ -131,8 +170,8 @@ $$
 * **Inputs:** Spot Price ($S_0$), Strike Price ($K$), Time to Expiry ($T$), Risk-Free rate ($r$), Volatility ($\sigma$).
 * **Outputs:** Exact analytical Option Price and instantaneous Greeks (Delta, Gamma, Vega, Theta, Rho).
 ---
-""",
-    "binomial": r"""
+''',
+    "binomial": r'''
 ### 🌳 Binomial Tree Model
 Think of the **Binomial Tree** like a giant game of Plinko. Instead of one continuous math equation, this model breaks time down into hundreds of tiny, individual steps (like days or hours).
 
@@ -163,9 +202,9 @@ $$
 * **Inputs:** Base parameters + **Steps** (tree depth). More numerical steps = better accuracy but takes longer to compute. 
 * **Outputs:** American Options Price and finite-difference Greeks.
 ---
-""",
-    "trinomial": r"""
-### 🌲 Trinomial Tree Mode
+''',
+    "trinomial": r'''
+### 🌲 Trinomial Tree Model
 The **Trinomial Tree** is exactly like the Binomial Tree's older, smarter brother. It simply adds a third option at every single step.
 
 **Intuition:**
@@ -184,8 +223,8 @@ $$
 * **Inputs:** Base mathematical parameters + **Steps** (controls geometric grid resolution).
 * **Outputs:** Pre-early-exercise American Option Price and highly stable finite-difference Greeks. 
 ---
-""",
-    "monte_carlo": r"""
+''',
+    "monte_carlo": r'''
 ### 🎲 Monte Carlo Simulation
 **Monte Carlo** is totally different from the others. Imagine rolling a massive handful of 10,000 dice to predict the future.
 
@@ -213,7 +252,7 @@ $$
 * **Inputs:** Base parameters + **Paths** (number of isolated random walk simulations, $M$).
 * **Outputs:** Stochastically Simulated Option Price. *Warning: Estimating precise Greeks requires immense compute topology (running millions of grouped paths).*
 ---
-"""
+'''
 }
 
 @dash.callback(

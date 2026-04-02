@@ -56,7 +56,7 @@ Now that you securely know the basics, head to the **Models** page. Play around 
 
     return html.Div([
         dbc.Container([
-            html.H1("Introduction to Options Trading", className="display-4 fw-bold mb-4 mt-3"),
+            html.H1("Introduction to Options Trading", className="text-neon display-4 fw-bold mb-4 mt-3"),
             dbc.Card([
                 dbc.CardBody([
                     dcc.Markdown(intro_markdown, mathjax=True)

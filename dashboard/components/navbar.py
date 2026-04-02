@@ -10,7 +10,7 @@ def create_navbar() -> dbc.Navbar:
     """Create the main navigation bar."""
     return dbc.Navbar(
         dbc.Container([
-            dbc.NavbarBrand("⚡ Quantiv", href="/", className="ms-2"),
+            html.Img(src="/assets/logo1.png", style={"height": "60px", "width": "200px"}, className="logo_png"),
             dbc.Nav([
                 dbc.NavItem(dbc.NavLink("Home", href="/")),
                 dbc.NavItem(dbc.NavLink("Intro", href="/intro")),
@@ -19,9 +19,14 @@ def create_navbar() -> dbc.Navbar:
                 dbc.NavItem(dbc.NavLink("Greeks", href="/greeks")),
                 dbc.NavItem(dbc.NavLink("Vol Surface", href="/surface")),
                 dbc.NavItem(dbc.NavLink("Strategy", href="/strategy")),
+                
+                # --- NEW PAGES ADDED HERE ---
+                dbc.NavItem(dbc.NavLink("Plans", href="/subscription", style={'color': '#fbbf24', 'fontWeight': 'bold'})),
+                dbc.NavItem(dbc.NavLink("Profile", href="/portfolio",style={'margin-left': '20vw',"margin-right":"10px"})),
+                
             ], navbar=True),
-        ], fluid=True),
-        color="dark",
+        ], fluid=True,style={"fontSize":"20px"}),
         dark=True,
         sticky="top",
+        className="mt-4 mx-3 glass-nav border-radius-60px",
     )

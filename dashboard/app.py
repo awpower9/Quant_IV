@@ -15,6 +15,8 @@ from dashboard.layouts.surface_page import surface_layout
 from dashboard.layouts.strategy_page import strategy_layout
 from dashboard.layouts.live_page import live_layout
 from dashboard.components.navbar import create_navbar
+from dashboard.layouts.portfolio import portfolio_layout
+from dashboard.layouts.subscription import subscription_layout
 
 # ── App Initialization ───────────────────────────────────────────────────────
 
@@ -35,7 +37,12 @@ server = app.server
 
 # ── Layout ───────────────────────────────────────────────────────────────────
 
+# ── Layout ───────────────────────────────────────────────────────────────────
+
 app.layout = html.Div([
+    # ---> ADD THIS LINE: The Global Session Store <---
+    dcc.Store(id='session-user', storage_type='local'),
+    
     dcc.Location(id="url", refresh=False),
     create_navbar(),
     html.Div(id="page-content", className="container-fluid mt-4"),
@@ -72,6 +79,10 @@ def display_page(pathname: str, search: str = ""):
         return strategy_layout()
     elif pathname == "/live":
         return live_layout()
+    elif pathname == "/portfolio":
+        return portfolio_layout()
+    elif pathname == "/subscription":
+        return subscription_layout()
     else:
         return home_layout()
 

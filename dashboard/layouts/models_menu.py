@@ -47,7 +47,7 @@ def models_menu_layout() -> html.Div:
     """Create the model selection page layout."""
     return html.Div([
         dbc.Container([
-            html.H2("Multi-Model Pricer Selection", className="text-center mb-5 mt-3"),
+            html.H2("Multi-Model Pricer Selection", className="text-neon text-center mb-5 mt-3"),
             
             dbc.Row([
                 _model_card(
