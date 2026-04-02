@@ -2,8 +2,8 @@
 FROM python:3.11-slim-bookworm
 
 # Set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
 # Install system dependencies for C++ build and PostgreSQL
 # We need build-essential, cmake, and libpqxx for the C++ engine
@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
     git \
+    pkg-config \
     libpq-dev \
     libpqxx-dev \
     && rm -rf /var/lib/apt/lists/*
@@ -22,7 +23,10 @@ WORKDIR /app
 COPY . /app
 
 # Install the package (This triggers CMake to build the C++ extension)
-RUN pip install --no-cache-dir .
+# After installation, we remove the source folders to prevent "package shadowing"
+# where Python tries to import the local folder instead of the compiled version in site-packages.
+RUN pip install --no-cache-dir . && \
+    rm -rf quantiv engine bindings tests CMakeLists.txt setup.py
 
 # Expose the port used by the Dash application
 EXPOSE 8050

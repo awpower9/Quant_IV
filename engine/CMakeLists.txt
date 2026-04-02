@@ -4,26 +4,28 @@ if(WIN32)
     # Find libpq and libpqxx using standard CMake find_package for Windows (via vcpkg)
     find_package(PostgreSQL REQUIRED)
     find_package(libpqxx CONFIG REQUIRED)
-    set(PQXX_INCLUDE_DIR)
+    set(PQ_LIBRARY PostgreSQL::PostgreSQL)
     set(PQXX_LIBRARY libpqxx::pqxx)
-    set(PQ_INCLUDE_DIR ${PostgreSQL_INCLUDE_DIRS})
-    set(PQ_LIBRARY ${PostgreSQL_LIBRARIES})
 else()
-    # 1. Manually find libpqxx and libpq (Supports both Apple Silicon & Intel Macs)
-    find_path(PQXX_INCLUDE_DIR pqxx/pqxx PATHS /opt/homebrew/opt/libpqxx/include /usr/local/opt/libpqxx/include)
-    find_library(PQXX_LIBRARY pqxx PATHS /opt/homebrew/opt/libpqxx/lib /usr/local/opt/libpqxx/lib)
-
-    find_path(PQ_INCLUDE_DIR libpq-fe.h PATHS /opt/homebrew/opt/libpq/include /usr/local/opt/libpq/include)
-    find_library(PQ_LIBRARY pq PATHS /opt/homebrew/opt/libpq/lib /usr/local/opt/libpq/lib)
-
-    # Safety check to ensure Homebrew actually installed them
-    if(NOT PQXX_LIBRARY OR NOT PQ_LIBRARY)
-        message(FATAL_ERROR "Could not find PostgreSQL or libpqxx. Make sure 'brew install libpq libpqxx' was run.")
+    # ── Standard Linux/Mac Search ──────────────────────────────────────
+    find_package(PostgreSQL REQUIRED)
+    
+    # Try finding libpqxx via config (modern / Render / New Homebrew)
+    find_package(libpqxx CONFIG QUIET)
+    
+    if(libpqxx_FOUND)
+        set(PQXX_LIBRARY libpqxx::pqxx)
+    else()
+        # Fallback to manual search (Older systems / Custom layouts)
+        find_library(PQXX_LIBRARY pqxx PATHS /usr/lib /usr/local/lib /opt/homebrew/lib)
+        find_path(PQXX_INCLUDE_DIR pqxx/pqxx PATHS /usr/include /usr/local/include /opt/homebrew/include)
+        
+        if(NOT PQXX_LIBRARY)
+            message(FATAL_ERROR "Could not find libpqxx headers or library. Please install libpqxx-dev.")
+        endif()
     endif()
-endif()
-
-if(NOT PQXX_LIBRARY OR NOT PQ_LIBRARY)
-    message(FATAL_ERROR "Could not find PostgreSQL or libpqxx. Please ensure they are installed.")
+    
+    set(PQ_LIBRARY PostgreSQL::PostgreSQL)
 endif()
 
 # ── Create the Engine ───────────────────────────────────────────────────────
