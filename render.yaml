@@ -8,14 +8,14 @@ services:
     healthCheckPath: /
     envVars:
       - key: DB_HOST
-        placeholder: "Neon Database Host"
+        sync: false
       - key: DB_USER
-        placeholder: "Neon Database Username"
+        sync: false
       - key: DB_PASSWORD
-        placeholder: "Neon Database Password"
+        sync: false
       - key: DB_NAME
-        placeholder: "Neon Database Name"
+        sync: false
       - key: DB_PORT
-        placeholder: "5432"
+        value: "5432"
       - key: PYTHON_VERSION
         value: "3.11.8"
