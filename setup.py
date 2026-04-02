@@ -86,6 +86,7 @@ setup(
         "dash-bootstrap-components>=1.5",
         "yfinance>=0.2.36",
         "python-dotenv>=1.0.0",
+        "gunicorn>=21.2.0",
     ],
     extras_require={
         "dev": [

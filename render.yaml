@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: quantiv-app
+    env: docker
+    plan: free # Render Free Instance Type
+    region: singapore # Optimized for India (closest to Mumbai)
+    dockerfilePath: Dockerfile
+    healthCheckPath: /
+    envVars:
+      - key: DB_HOST
+        placeholder: "Neon Database Host"
+      - key: DB_USER
+        placeholder: "Neon Database Username"
+      - key: DB_PASSWORD
+        placeholder: "Neon Database Password"
+      - key: DB_NAME
+        placeholder: "Neon Database Name"
+      - key: DB_PORT
+        placeholder: "5432"
+      - key: PYTHON_VERSION
+        value: "3.11.8"

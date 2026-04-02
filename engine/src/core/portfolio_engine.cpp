@@ -12,7 +12,7 @@ QuantivPortfolioEngine::QuantivPortfolioEngine() {
     const char* port = std::getenv("DB_PORT") ? std::getenv("DB_PORT") : "5433";
     
     conn_string = "dbname=" + std::string(dbname) + " user=" + std::string(user) + 
-                  " password=" + std::string(pass) + " hostaddr=" + std::string(host) + 
+                  " password=" + std::string(pass) + " host=" + std::string(host) + 
                   " port=" + std::string(port);
                   
 
