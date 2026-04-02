@@ -42,6 +42,10 @@ class CMakeBuild(build_ext):
 
         cfg = "Debug" if self.debug else "Release"
         build_args = ["--config", cfg]
+        if "CMAKE_TOOLCHAIN_FILE" in os.environ:
+            cmake_args.append(f"-DCMAKE_TOOLCHAIN_FILE={os.environ['CMAKE_TOOLCHAIN_FILE']}")
+        elif sys.platform == "win32" and os.path.exists("C:/vcpkg/scripts/buildsystems/vcpkg.cmake"):
+            cmake_args.append("-DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake")
         cmake_args += [
             f"-DCMAKE_BUILD_TYPE={cfg}",
             f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{cfg.upper()}={extdir}{os.sep}"
@@ -81,6 +85,7 @@ setup(
         "dash>=2.14",
         "dash-bootstrap-components>=1.5",
         "yfinance>=0.2.36",
+        "python-dotenv>=1.0.0",
     ],
     extras_require={
         "dev": [

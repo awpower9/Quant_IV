@@ -44,3 +44,7 @@ pybind11_add_module(_quantiv_engine
 )
 
 target_link_libraries(_quantiv_engine PRIVATE quantiv_engine)
+
+if(MSVC)
+    set_target_properties(_quantiv_engine PROPERTIES LINK_FLAGS "/FORCE:MULTIPLE")
+endif()

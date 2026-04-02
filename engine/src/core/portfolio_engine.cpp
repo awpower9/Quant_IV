@@ -1,11 +1,21 @@
 #include "quantiv/core/portfolio_engine.h"
 #include <iostream>
 #include <stdexcept>
+#include <cstdlib>
+#include <string>
 
 QuantivPortfolioEngine::QuantivPortfolioEngine() {
-    // UPDATE THIS with your actual Postgres credentials if they are different!
-    conn_string = "dbname=quantivdb user=postgres password=postgres hostaddr=127.0.0.1 port=5432";
+    const char* dbname = std::getenv("DB_NAME") ? std::getenv("DB_NAME") : "quantivdb";
+    const char* user = std::getenv("DB_USER") ? std::getenv("DB_USER") : "postgres";
+    const char* pass = std::getenv("DB_PASSWORD") ? std::getenv("DB_PASSWORD") : "12344321";
+    const char* host = std::getenv("DB_HOST") ? std::getenv("DB_HOST") : "127.0.0.1";
+    const char* port = std::getenv("DB_PORT") ? std::getenv("DB_PORT") : "5433";
     
+    conn_string = "dbname=" + std::string(dbname) + " user=" + std::string(user) + 
+                  " password=" + std::string(pass) + " hostaddr=" + std::string(host) + 
+                  " port=" + std::string(port);
+                  
+
     try {
         pqxx::connection c(conn_string);
         pqxx::work w(c);

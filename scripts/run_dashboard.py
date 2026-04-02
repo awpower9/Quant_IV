@@ -21,7 +21,7 @@ def main():
     args = parser.parse_args()
 
     from dashboard.app import app
-    print(f"🚀 Starting Quantiv Dashboard at http://{args.host}:{args.port}")
+    print(f"Starting Quantiv Dashboard at http://{args.host}:{args.port}")
     app.run(debug=args.debug, port=args.port, host=args.host)
 
 
