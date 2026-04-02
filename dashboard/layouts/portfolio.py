@@ -50,37 +50,128 @@ def render_login_screen():
     ])
 
 
-# ── 2. DASHBOARD SCREEN (Animated & Glassmorphic) ──────────────────────────────
-def render_dashboard(username):
+def get_portfolio_views(username):
     try:
-        tier      = engine.get_subscription_tier(username)
-        cash      = engine.get_available_cash(username)
-        total_val = engine.get_portfolio_value(username)
+        cash = engine.get_available_cash(username)
         raw_portfolio = engine.get_user_portfolio(username)
-        uses_left = engine.get_remaining_uses(username)
     except:
-        tier, cash, total_val, raw_portfolio, uses_left = "Unknown", 0.0, 0.0, [], 0
+        cash, raw_portfolio = 0.0, []
 
-    # Data Table
+    total_invested = 0.0
+    live_portfolio_val = 0.0
+    processed_portfolio = []
+
+    if raw_portfolio:
+        symbols = list(set([p.symbol for p in raw_portfolio]))
+        live_prices = {}
+        for sym in symbols:
+            try:
+                ticker = yf.Ticker(sym)
+                price = ticker.fast_info['lastPrice']
+                currency = ticker.fast_info['currency'] if 'currency' in ticker.fast_info else 'USD'
+                
+                # Auto-convert foreign underlying assets back to USD
+                if currency != 'USD':
+                    try:
+                        fx_ticker = yf.Ticker(f"{currency}USD=X")
+                        rate = fx_ticker.fast_info['lastPrice']
+                        price = price * rate
+                    except:
+                        pass
+                        
+                live_prices[sym] = price
+            except:
+                live_prices[sym] = None
+
+        for p in raw_portfolio:
+            invested = p.purchase_price * p.quantity
+            total_invested += invested
+            
+            cp = live_prices.get(p.symbol)
+            if cp is not None:
+                live_val = cp * p.quantity
+                live_portfolio_val += live_val
+                pnl = live_val - invested
+                
+                pnl_str = f"-${abs(pnl):,.2f}" if pnl < 0 else f"+${pnl:,.2f}"
+                
+                processed_portfolio.append({
+                    "Symbol": p.symbol, "Name": p.name, "Qty": p.quantity,
+                    "Avg Cost": f"${p.purchase_price:,.2f}",
+                    "Live Price": f"${cp:,.2f}",
+                    "Current Value": f"${live_val:,.2f}",
+                    "PnL": pnl_str
+                })
+            else:
+                processed_portfolio.append({
+                    "Symbol": p.symbol, "Name": p.name, "Qty": p.quantity,
+                    "Avg Cost": f"${p.purchase_price:,.2f}",
+                    "Live Price": "N/A",
+                    "Current Value": "N/A",
+                    "PnL": "N/A"
+                })
+
+    live_equity = cash + live_portfolio_val
+
     if not raw_portfolio:
         table_ui = html.Div(className='glass-card animate-fade-up delay-4', style={'padding': '40px', 'textAlign': 'center'}, children=[
             html.P("Portfolio is empty.", style={'color': C['muted'], 'fontSize': '16px'}),
             html.P("Execute your first trade to populate this table.", style={'color': C['muted'], 'fontSize': '13px', 'opacity': '0.7'})
         ])
     else:
-        df = pd.DataFrame([{"Symbol": p.symbol, "Name": p.name, "Qty": p.quantity, "Avg Cost": f"${p.purchase_price:,.2f}", "Total Value": f"${p.current_total_value:,.2f}"} for p in raw_portfolio])
+        df = pd.DataFrame(processed_portfolio)
         table_ui = html.Div(className='animate-fade-up delay-4', children=[
             dash_table.DataTable(
                 data=df.to_dict('records'),
                 columns=[{"name": i, "id": i} for i in df.columns],
                 style_header={'backgroundColor': 'rgba(0,0,0,0.4)', 'color': C['muted'], 'fontWeight': 'bold', 'border': 'none', 'padding': '15px'},
                 style_cell={'backgroundColor': 'rgba(20,20,30,0.4)', 'color': C['text'], 'border': 'none', 'borderBottom': '1px solid rgba(255,255,255,0.05)', 'padding': '15px', 'textAlign': 'left', 'fontFamily': 'Inter'},
-                style_data_conditional=[{'if': {'column_id': 'Total Value'}, 'color': C['green'], 'fontWeight': 'bold'}],
+                style_data_conditional=[
+                    {'if': {'column_id': 'Current Value'}, 'color': C['blue'], 'fontWeight': 'bold'},
+                    {'if': {'column_id': 'PnL', 'filter_query': '{PnL} contains "-"' }, 'color': C['red']},
+                    {'if': {'column_id': 'PnL', 'filter_query': '{PnL} contains "+"' }, 'color': C['green']}
+                ],
             )
         ])
 
+    stats_children = [
+        html.Div(className='glass-card', style={'flex': '1', 'padding': '25px'}, children=[
+            html.P("Buying Power", style={'color': C['muted'], 'fontSize': '13px', 'textTransform': 'uppercase', 'margin': '0 0 10px 0'}),
+            html.H1(f"${cash:,.2f}", className='mono-text', style={'color': C['text'], 'margin': '0', 'fontSize': '30px'})
+        ]),
+        html.Div(className='glass-card', style={'flex': '1', 'padding': '25px'}, children=[
+            html.P("Total Invested", style={'color': C['muted'], 'fontSize': '13px', 'textTransform': 'uppercase', 'margin': '0 0 10px 0'}),
+            html.H1(f"${total_invested:,.2f}", className='mono-text', style={'color': C['gold'], 'margin': '0', 'fontSize': '30px'})
+        ]),
+        html.Div(className='glass-card', style={'flex': '1', 'padding': '25px'}, children=[
+            html.P("Live Equity", style={'color': C['muted'], 'fontSize': '13px', 'textTransform': 'uppercase', 'margin': '0 0 10px 0'}),
+            html.H1(f"${live_equity:,.2f}", className='mono-text', style={'color': C['green'], 'margin': '0', 'fontSize': '30px'})
+        ])
+    ]
+    
+    holdings_children = [
+        html.H4("Current Positions", style={'margin': '0 0 20px 0', 'color': C['text'], 'borderBottom': '1px solid rgba(255,255,255,0.1)', 'paddingBottom': '15px'}),
+        table_ui
+    ]
+    
+    return stats_children, holdings_children
+
+
+# ── 2. DASHBOARD SCREEN (Animated & Glassmorphic) ──────────────────────────────
+def render_dashboard(username):
+    try:
+        tier      = engine.get_subscription_tier(username)
+        uses_left = engine.get_remaining_uses(username)
+    except:
+        tier, uses_left = "Unknown", 0
+
+    stats_children, holdings_children = get_portfolio_views(username)
+
     return html.Div([
         
+        # ── Dashboard Auto Refresh ──
+        dcc.Interval(id='portfolio-refresh-interval', interval=5000, n_intervals=0),
+
         # ── Header (With Logout Button!) ──
         html.Div(className='glass-card animate-fade-up', style={'padding': '20px 30px', 'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'center', 'marginBottom': '30px'}, children=[
             html.Div(style={'display': 'flex', 'alignItems': 'center', 'gap': '15px'}, children=[
@@ -89,7 +180,7 @@ def render_dashboard(username):
                     html.H3(f"Welcome, {username}", style={'margin': '0', 'color': C['text']}),
                     html.Div(style={'display': 'flex', 'alignItems': 'center', 'gap': '8px', 'marginTop': '4px'}, children=[
                         html.Span(className='live-status'),
-                        html.Span("", style={'color': C['green'], 'fontSize': '12px', 'textTransform': 'uppercase', 'letterSpacing': '1px'})
+                        html.Span("LIVE CONNECTION", style={'color': C['green'], 'fontSize': '12px', 'textTransform': 'uppercase', 'letterSpacing': '1px'})
                     ])
                 ])
             ]),
@@ -103,16 +194,7 @@ def render_dashboard(username):
         ]),
 
         # ── Stat Cards Row ──
-        html.Div(className='animate-fade-up delay-1', style={'display': 'flex', 'gap': '20px', 'marginBottom': '30px'}, children=[
-            html.Div(className='glass-card', style={'flex': '1', 'padding': '25px'}, children=[
-                html.P("Total Equity", style={'color': C['muted'], 'fontSize': '13px', 'textTransform': 'uppercase', 'margin': '0 0 10px 0'}),
-                html.H1(f"${total_val:,.2f}", className='mono-text', style={'color': C['green'], 'margin': '0', 'fontSize': '36px'})
-            ]),
-            html.Div(className='glass-card', style={'flex': '1', 'padding': '25px'}, children=[
-                html.P("Buying Power", style={'color': C['muted'], 'fontSize': '13px', 'textTransform': 'uppercase', 'margin': '0 0 10px 0'}),
-                html.H1(f"${cash:,.2f}", className='mono-text', style={'color': C['text'], 'margin': '0', 'fontSize': '36px'})
-            ])
-        ]),
+        html.Div(id='portfolio-stats-row', className='animate-fade-up delay-1', style={'display': 'flex', 'gap': '20px', 'marginBottom': '30px'}, children=stats_children),
 
         # ── Main Content (Trade + Table) ──
         html.Div(style={'display': 'flex', 'gap': '30px', 'alignItems': 'flex-start'}, children=[
@@ -137,10 +219,7 @@ def render_dashboard(username):
             ]),
 
             # Right: Holdings Table
-            html.Div(className='glass-card animate-fade-right delay-3', style={'flex': '1', 'padding': '30px'}, children=[
-                html.H4("Current Positions", style={'margin': '0 0 20px 0', 'color': C['text'], 'borderBottom': '1px solid rgba(255,255,255,0.1)', 'paddingBottom': '15px'}),
-                table_ui
-            ])
+            html.Div(id='portfolio-holdings', className='glass-card animate-fade-right delay-3', style={'flex': '1', 'padding': '30px'}, children=holdings_children)
         ])
     ])
 
@@ -152,7 +231,6 @@ def route_page(username):
     return render_dashboard(username)
 
 # ---> CALLBACK 1: Handles Login and Register Only
-# ---> CALLBACK 1: Handles Login and Register Only
 @callback(
     [Output('session-user', 'data'), Output('auth-msg', 'children'), Output('auth-msg', 'style')],
     [Input('btn-login', 'n_clicks'), Input('btn-register', 'n_clicks')],
@@ -160,7 +238,6 @@ def route_page(username):
     prevent_initial_call=True
 )
 def handle_login_register(btn_login, btn_register, user, pwd):
-    # FIXED: Replaced the missing FONT variable with the actual font string
     base_style = {'marginTop': '18px', 'textAlign': 'center', 'height': '18px', 'fontSize': '12px', 'fontFamily': 'JetBrains Mono, monospace'}
     
     ctx = dash.callback_context
@@ -188,10 +265,7 @@ def handle_login_register(btn_login, btn_register, user, pwd):
 def handle_logout(n_clicks):
     if n_clicks is None:
         return dash.no_update
-    # Destroys the session token, kicking them back to the login screen
     return None
-
-# ... (Keep fetch_live_data and execute_trade callbacks exactly the same below this) ...
 
 @callback(
     [Output('trade-name', 'value'), Output('trade-price', 'value'), Output('trade-msg', 'children'), Output('trade-msg', 'style')],
@@ -201,7 +275,22 @@ def fetch_live_data(n_clicks, sym):
     if not sym: return "", "", "Enter a symbol.", {'color': C['red']}
     try:
         ticker = yf.Ticker(sym.upper())
-        return ticker.info.get('shortName', sym.upper()), round(ticker.fast_info['lastPrice'], 2), f"✓ {sym.upper()} fetched.", {'color': C['green']}
+        price = ticker.fast_info['lastPrice']
+        currency = ticker.fast_info['currency'] if 'currency' in ticker.fast_info else 'USD'
+        
+        # Currency normalizer string tag for the prompt feedback
+        fx_tag = f" ({currency} to USD)" if currency != 'USD' else ""
+        
+        if currency != 'USD':
+            try:
+                fx_ticker = yf.Ticker(f"{currency}USD=X")
+                rate = fx_ticker.fast_info['lastPrice']
+                price = price * rate
+            except:
+                pass
+
+        name = ticker.info.get('shortName', sym.upper())
+        return name, round(price, 2), f"✓ {sym.upper()} fetched{fx_tag}.", {'color': C['green']}
     except: return "", "", f"Failed to fetch {sym.upper()}", {'color': C['red']}
 
 @callback(
@@ -221,3 +310,15 @@ def execute_trade(clicks, username, order_type, sym, name, qty, price):
         else: engine.sell_stock(username, sym.upper(), int(qty), float(price))
         return render_dashboard(username), html.Span(f"✓ Order executed.", style={'color': C['green']})
     except Exception as e: return dash.no_update, html.Span(f"Error: {e}", style={'color': C['red']})
+
+# ---> CALLBACK 3: Auto Refresh Portfolio
+@callback(
+    [Output('portfolio-stats-row', 'children'), Output('portfolio-holdings', 'children')],
+    Input('portfolio-refresh-interval', 'n_intervals'),
+    State('session-user', 'data'),
+    prevent_initial_call=True
+)
+def auto_refresh_portfolio(n_intervals, username):
+    if not username: return no_update, no_update
+    stats, holdings = get_portfolio_views(username)
+    return stats, holdings

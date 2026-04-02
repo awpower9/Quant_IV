@@ -47,5 +47,15 @@ def pricer_layout(model: str = "bsm") -> html.Div:
                     ])
                 ])
             ])
+        ]),
+
+        # ── Model Description / Educational Content ──
+        html.Hr(className="my-4"),
+        dbc.Row([
+            dbc.Col(md=12, children=[
+                html.Div(className="glass-card p-4", children=[
+                    html.Div(id="model-description-output")
+                ])
+            ])
         ])
     ])

@@ -34,6 +34,8 @@ def create_parameter_panel(
                         {"label": "Binomial Tree", "value": "binomial"},
                         {"label": "Trinomial Tree", "value": "trinomial"},
                         {"label": "Monte Carlo", "value": "monte_carlo"},
+                        {"label": "Heston (Pro) 🔒", "value": "heston"},
+                        {"label": "Merton (Pro) 🔒", "value": "merton"},
                     ],
                     value=default_model,
                     clearable=False,
@@ -78,5 +80,8 @@ def create_parameter_panel(
             ),
         ]),
     ], className="mb-3"))
+
+    # Container for dynamically injected Pro sliders (Heston/Merton)
+    children.append(html.Div(id="advanced-sliders-container"))
 
     return dbc.Card(dbc.CardBody(children), className="shadow-sm")

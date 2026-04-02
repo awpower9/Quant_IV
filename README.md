@@ -77,6 +77,8 @@ python -m venv .venv
 
 # Activate it
 .venv\Scripts\activate          # Windows
+
+source .venv/Scripts/activate 
 # source .venv/bin/activate     # Linux/macOS
 
 # Install dependencies AND build the C++ extension automatically

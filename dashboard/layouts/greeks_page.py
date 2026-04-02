@@ -31,4 +31,15 @@ def greeks_layout() -> html.Div:
                 ]),
             ], md=9),
         ]),
+
+        # ── Greeks Educational Content ──
+        html.Hr(className="my-4"),
+        dbc.Row([
+            dbc.Col(md=12, children=[
+                html.Div(className="glass-card p-4", children=[
+                    html.H4("🏛️ The Greek Explained", className="text-info fw-bold mb-3"),
+                    html.Div(id="greek-description-output")
+                ])
+            ])
+        ])
     ])

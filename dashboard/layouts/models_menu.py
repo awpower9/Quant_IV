@@ -78,6 +78,20 @@ def models_menu_layout() -> html.Div:
                     ["Path-dependent options", "Highly customizable", "Computationally intensive"],
                     "/pricer?model=monte_carlo"
                 ),
+                _model_card(
+                    "Heston Model (Pro) 🔒",
+                    "🌪️",
+                    "Stochastic volatility model with mean-reverting variance dynamics.",
+                    ["Volatility smile", "Correlated processes", "Characteristic function"],
+                    "/pricer?model=heston"
+                ),
+                _model_card(
+                    "Merton Jump-Diffusion (Pro) 🔒",
+                    "🦢",
+                    "Jump-diffusion model capturing Black Swan crash events.",
+                    ["Fat tail pricing", "Poisson jump process", "Crash risk modeling"],
+                    "/pricer?model=merton"
+                ),
             ])
         ], className="py-4")
     ])

@@ -40,8 +40,9 @@ server = app.server
 # ── Layout ───────────────────────────────────────────────────────────────────
 
 app.layout = html.Div([
-    # ---> ADD THIS LINE: The Global Session Store <---
+    # ---> Global Stores (always exist in the DOM) <---
     dcc.Store(id='session-user', storage_type='local'),
+    dcc.Store(id='pro-params-store', data={}),
     
     dcc.Location(id="url", refresh=False),
     create_navbar(),
