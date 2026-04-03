@@ -40,6 +40,7 @@ add_library(quantiv_engine
     src/models/trinomial.cpp
     src/models/monte_carlo.cpp
     src/greeks/greeks_engine.cpp
+    src/models/pro_engine.cpp
 )
 
 target_include_directories(quantiv_engine PUBLIC 

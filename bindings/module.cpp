@@ -19,6 +19,7 @@ void init_monte_carlo_bindings(py::module_& m);
 void init_greeks_bindings(py::module_& m);
 void init_solver_bindings(py::module_& m);
 void init_portfolio_bindings(py::module_& m);
+void init_pro_engine_bindings(py::module_& m);
 
 PYBIND11_MODULE(_quantiv_engine, m) {
     m.doc() = "Quantiv C++ Options Pricing Engine";
@@ -31,4 +32,5 @@ PYBIND11_MODULE(_quantiv_engine, m) {
     init_greeks_bindings(m);
     init_solver_bindings(m);
     init_portfolio_bindings(m);
+    init_pro_engine_bindings(m);
 }

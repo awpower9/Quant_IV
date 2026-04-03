@@ -9,13 +9,14 @@ import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
 
 from quantiv.pricing import Pricer
-from quantiv.pricing.quantiv_pro_engine import price_heston, price_merton
+# from quantiv.pricing.quantiv_pro_engine import price_heston, price_merton  # DELETED
 from quantiv.utils.formatting import format_price, format_greeks
 from quantiv import _quantiv_engine
 from dashboard.components.advanced_visuals import get_heston_vol_surface, get_merton_pdf_comparison
 
 pricer = Pricer()
 engine = _quantiv_engine.QuantivPortfolioEngine()
+pro_engine = _quantiv_engine.ProEngine()
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -183,15 +184,19 @@ def update_price(n_clicks, spot, strike, vol_pct, rate_pct, expiry, model,
             rho = rho or -0.7
             v0 = vol ** 2  # Starting variance from base vol slider
 
-            results = price_heston(spot, strike, expiry, rate, v0, kappa, theta, sigma_v, rho, option_type)
-            price_text = format_price(results["price"])
+            o_type = _quantiv_engine.OptionType.Call if option_type.lower() == "call" else _quantiv_engine.OptionType.Put
+            option = _quantiv_engine.Option(strike, expiry, o_type)
+            market = _quantiv_engine.MarketData(spot, vol, rate)
+
+            result = pro_engine.price_heston(option, market, kappa, theta, sigma_v, rho)
+            price_text = format_price(result.price)
 
             greeks_div = html.Div([
                 html.Table([
                     html.Thead(html.Tr([html.Th("Greek"), html.Th("Value")])),
                     html.Tbody([
-                        html.Tr([html.Td("Delta (Δ)"), html.Td(f"{results['delta']:.6f}")]),
-                        html.Tr([html.Td("Gamma (Γ)"), html.Td(f"{results['gamma']:.6f}")]),
+                        html.Tr([html.Td("Delta (Δ)"), html.Td(f"{result.greeks.get('delta', 0.0):.6f}")]),
+                        html.Tr([html.Td("Gamma (Γ)"), html.Td(f"{result.greeks.get('gamma', 0.0):.6f}")]),
                     ]),
                 ], className="table table-sm table-dark")
             ])
@@ -219,15 +224,19 @@ def update_price(n_clicks, spot, strike, vol_pct, rate_pct, expiry, model,
             muj = muj or -0.15
             sigmaj = sigmaj or 0.20
 
-            results = price_merton(spot, strike, expiry, rate, vol, lamb, muj, sigmaj, option_type)
-            price_text = format_price(results["price"])
+            o_type = _quantiv_engine.OptionType.Call if option_type.lower() == "call" else _quantiv_engine.OptionType.Put
+            option = _quantiv_engine.Option(strike, expiry, o_type)
+            market = _quantiv_engine.MarketData(spot, vol, rate)
+
+            result = pro_engine.price_merton(option, market, lamb, muj, sigmaj)
+            price_text = format_price(result.price)
 
             greeks_div = html.Div([
                 html.Table([
                     html.Thead(html.Tr([html.Th("Greek"), html.Th("Value")])),
                     html.Tbody([
-                        html.Tr([html.Td("Delta (Δ)"), html.Td(f"{results['delta']:.6f}")]),
-                        html.Tr([html.Td("Gamma (Γ)"), html.Td(f"{results['gamma']:.6f}")]),
+                        html.Tr([html.Td("Delta (Δ)"), html.Td(f"{result.greeks.get('delta', 0.0):.6f}")]),
+                        html.Tr([html.Td("Gamma (Γ)"), html.Td(f"{result.greeks.get('gamma', 0.0):.6f}")]),
                     ]),
                 ], className="table table-sm table-dark")
             ])

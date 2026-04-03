@@ -40,7 +40,8 @@ pybind11_add_module(_quantiv_engine
     bind_monte_carlo.cpp
     bind_greeks.cpp
     bind_solvers.cpp
-    bind_portfolio.cpp  # <-- ADDED THIS!
+    bind_portfolio.cpp
+    bind_pro_engine.cpp
 )
 
 target_link_libraries(_quantiv_engine PRIVATE quantiv_engine)
