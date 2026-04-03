@@ -14,6 +14,7 @@ from dashboard.layouts.greeks_page import greeks_layout
 from dashboard.layouts.surface_page import surface_layout
 from dashboard.layouts.strategy_page import strategy_layout
 from dashboard.layouts.live_page import live_layout
+from dashboard.layouts.comparison_page import comparison_layout
 from dashboard.components.navbar import create_navbar
 from dashboard.layouts.portfolio import portfolio_layout
 from dashboard.layouts.subscription import subscription_layout
@@ -82,6 +83,8 @@ def display_page(pathname: str, search: str = ""):
         return live_layout()
     elif pathname == "/portfolio":
         return portfolio_layout()
+    elif pathname == "/comparison":
+        return comparison_layout()
     elif pathname == "/subscription":
         return subscription_layout()
     else:
@@ -96,6 +99,7 @@ import dashboard.callbacks.greeks_callbacks   # noqa: F401, E402
 import dashboard.callbacks.surface_callbacks  # noqa: F401, E402
 import dashboard.callbacks.strategy_callbacks # noqa: F401, E402
 import dashboard.callbacks.live_callbacks     # noqa: F401, E402
+import dashboard.callbacks.comparison_callbacks # noqa: F401, E402
 
 
 if __name__ == "__main__":

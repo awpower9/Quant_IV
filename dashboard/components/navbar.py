@@ -16,6 +16,7 @@ def create_navbar() -> dbc.Navbar:
                 dbc.NavItem(dbc.NavLink("Intro", href="/intro")),
                 dbc.NavItem(dbc.NavLink("Live", href="/live")),
                 dbc.NavItem(dbc.NavLink("Models", href="/models")),
+                dbc.NavItem(dbc.NavLink("Compare Models", href="/comparison")),
                 dbc.NavItem(dbc.NavLink("Greeks", href="/greeks")),
                 dbc.NavItem(dbc.NavLink("Vol Surface", href="/surface")),
                 dbc.NavItem(dbc.NavLink("Strategy", href="/strategy")),

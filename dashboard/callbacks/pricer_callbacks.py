@@ -576,6 +576,5 @@ Where:
     Input("pricer-model", "value")
 )
 def update_model_description(model: str):
-    """Update the markdown formatted description based on the selected model."""
     desc = MODEL_DESCRIPTIONS.get(model, "Description not found.")
     return dcc.Markdown(desc, mathjax=True)
