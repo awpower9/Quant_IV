@@ -48,7 +48,7 @@ def surface_layout() -> html.Div:
         dbc.Row([
             dbc.Col([
                 dcc.Markdown(r"""
-### 🌊 Volatility Surface
+###  Volatility Surface
 
 The **Implied Volatility (IV) Surface** is a 3-dimensional plot that physically visualizes how expensive "fear" is across different **Strikes** (x-axis) and **Expiries** (y-axis). It perfectly proves that the real stock market is driven by human emotion, destroying the old Black-Scholes assumption that risk is totally constant!
 
@@ -67,5 +67,5 @@ $$
 * It correctly prices exotic derivatives that strictly rely on the entire probability distribution of the asset, not just an isolated volatility scalar.
                 """, mathjax=True)
             ], md=12)
-        ]),
+        ],className="glass-card",style={"width":"90%","margin":"0 auto"}),
     ])

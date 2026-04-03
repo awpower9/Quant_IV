@@ -32,4 +32,5 @@ public:
     
     void buy_stock(const std::string& username, const std::string& sym, const std::string& name, int qty, double price);
     void sell_stock(const std::string& username, const std::string& sym, int qty, double price);
+    bool buy_credit_bundle(const std::string& username, int bundle_price);
 };

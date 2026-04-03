@@ -9,7 +9,7 @@ QuantivPortfolioEngine::QuantivPortfolioEngine() {
     const char* user = std::getenv("DB_USER") ? std::getenv("DB_USER") : "postgres";
     const char* pass = std::getenv("DB_PASSWORD") ? std::getenv("DB_PASSWORD") : "12344321";
     const char* host = std::getenv("DB_HOST") ? std::getenv("DB_HOST") : "127.0.0.1";
-    const char* port = std::getenv("DB_PORT") ? std::getenv("DB_PORT") : "5433";
+    const char* port = std::getenv("DB_PORT") ? std::getenv("DB_PORT") : "5432";
     
     conn_string = "dbname=" + std::string(dbname) + " user=" + std::string(user) + 
                   " password=" + std::string(pass) + " host=" + std::string(host) + 
@@ -102,6 +102,9 @@ double QuantivPortfolioEngine::get_portfolio_value(const std::string& username) 
 
 int QuantivPortfolioEngine::get_remaining_uses(const std::string& username) {
     try {
+        // If user is Pro, we return -1 to signify "Unlimited" to the UI
+        if (get_subscription_tier(username) == "Pro") return -1;
+
         pqxx::connection c(conn_string);
         pqxx::work w(c);
         pqxx::result r = w.exec_params("SELECT credits FROM users WHERE username = $1", username);
@@ -112,7 +115,8 @@ int QuantivPortfolioEngine::get_remaining_uses(const std::string& username) {
 
 bool QuantivPortfolioEngine::upgrade_subscription(const std::string& username, const std::string& tier) {
     try {
-        int new_credits = (tier == "Plus") ? 50 : 100;
+        // Updated Credits: Plus gets 100, Pro gets Unlimited (internal flag)
+        int new_credits = (tier == "Plus") ? 100 : 9999; 
         pqxx::connection c(conn_string);
         pqxx::work w(c);
         w.exec_params("UPDATE users SET tier = $1, credits = $2 WHERE username = $3", tier, new_credits, username);
@@ -121,11 +125,37 @@ bool QuantivPortfolioEngine::upgrade_subscription(const std::string& username, c
     } catch (...) { return false; }
 }
 
+bool QuantivPortfolioEngine::buy_credit_bundle(const std::string& username, int bundle_price) {
+    try {
+        int credits_to_add = 0;
+        if (bundle_price == 1) credits_to_add = 50;
+        else if (bundle_price == 3) credits_to_add = 200;
+        else if (bundle_price == 5) credits_to_add = 400;
+        else return false;
+
+        pqxx::connection c(conn_string);
+        pqxx::work w(c);
+        
+        // Deduct cash and add credits
+        pqxx::result r = w.exec_params("SELECT cash FROM users WHERE username = $1", username);
+        if (r.empty() || r[0][0].as<double>() < (double)bundle_price) return false;
+
+        w.exec_params("UPDATE users SET cash = cash - $1, credits = credits + $2 WHERE username = $3", 
+                      (double)bundle_price, credits_to_add, username);
+        w.commit();
+        return true;
+    } catch (...) { return false; }
+}
+
 bool QuantivPortfolioEngine::use_advanced_feature(const std::string& username) {
     try {
+        // RULE: Pro users have unlimited access and do not consume credits
+        if (get_subscription_tier(username) == "Pro") return true;
+
         pqxx::connection c(conn_string);
         pqxx::work w(c);
         pqxx::result r = w.exec_params("SELECT credits FROM users WHERE username = $1 FOR UPDATE", username);
+        
         if (!r.empty()) {
             int credits = r[0][0].as<int>();
             if (credits > 0) {

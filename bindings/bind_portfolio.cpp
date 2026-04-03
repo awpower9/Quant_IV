@@ -28,5 +28,7 @@ void init_portfolio_bindings(py::module_& m) {
         .def("upgrade_subscription", &QuantivPortfolioEngine::upgrade_subscription)
         .def("use_advanced_feature", &QuantivPortfolioEngine::use_advanced_feature)
         .def("buy_stock", &QuantivPortfolioEngine::buy_stock)
-        .def("sell_stock", &QuantivPortfolioEngine::sell_stock);
+        .def("sell_stock", &QuantivPortfolioEngine::sell_stock)
+        .def("buy_credit_bundle", &QuantivPortfolioEngine::buy_credit_bundle); 
+
 }

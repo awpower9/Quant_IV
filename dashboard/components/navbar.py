@@ -23,9 +23,9 @@ def create_navbar() -> dbc.Navbar:
                 
                 # --- NEW PAGES ADDED HERE ---
                 dbc.NavItem(dbc.NavLink("Plans", href="/subscription", style={'color': '#fbbf24', 'fontWeight': 'bold'})),
-                dbc.NavItem(dbc.NavLink("Profile", href="/portfolio",style={'margin-left': '20vw',"margin-right":"10px"})),
+                dbc.NavItem(dbc.NavLink("Profile", href="/portfolio",style={'margin-left': '10vw',"margin-right":"10px"})),
                 
-            ], navbar=True),
+            ], navbar=True,style={"marginLeft": "10vw"}),
         ], fluid=True,style={"fontSize":"20px"}),
         dark=True,
         sticky="top",

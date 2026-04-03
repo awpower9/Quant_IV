@@ -1,158 +1,120 @@
 import dash
 from dash import dcc, html, callback, Input, Output, State, no_update
+import dash_bootstrap_components as dbc
 from quantiv import _quantiv_engine
-
 
 print("[Quantiv Dash] Booting Subscription Page Engine...")
 engine = _quantiv_engine.QuantivPortfolioEngine()
 
 # ── Layout ─────────────────────────────────────────────────────────────────────
-# All styles live in /assets/quantiv.css — Dash auto-loads it on startup.
 def subscription_layout():
-   return html.Div(
-    
-    className='fade-up',
-    children=[
-        # ---> FIX: Deleted the duplicate dcc.Store(id='session-user') from here! <---
-        
+    return html.Div(className='fade-up animate-page', children=[
         html.Div(className='subs-page-wrapper', children=[
 
             # ── Page Header ────────────────────────────────────────────────
-            html.Div(style={'textAlign': 'center', 'marginBottom': '52px'}, children=[
-                html.H1("Choose Your Plan", className='text-neon')
+            html.Div(style={'textAlign': 'center', 'marginBottom': '40px'}, children=[
+                html.H1("Premium Terminal Access", className='text-neon')
             ]),
 
             # ── Status Banner ──────────────────────────────────────────────
-            html.Div(id='current-status-banner', className='status-banner'),
+            html.Div(id='current-status-banner', className='status-banner glass-card', 
+                     style={'marginBottom': '30px', 'padding': '15px'}),
 
-            # ── Plan Cards ─────────────────────────────────────────────────
-            html.Div(style={'display': 'flex', 'gap': '20px', 'alignItems': 'stretch'},
-                     children=[
+            # ── Section 1: Credit Top-Ups ──────────────────────────────────
+            html.Div(style={'marginBottom': '50px'}, children=[
+                html.H3("Instant Credit Top-Up", className='text-info mb-4', 
+                        style={'textAlign': 'center', 'fontFamily': "'DM Mono', monospace"}),
+                dbc.Row([
+                    _credit_bundle_card("Starter Pack", "50", "1.00", "btn-buy-50"),
+                    _credit_bundle_card("Pro Pack", "200", "3.00", "btn-buy-200"),
+                    _credit_bundle_card("Whale Pack", "400", "5.00", "btn-buy-400"),
+                ], className="g-4 justify-content-center"),
+            ]),
+
+            # ── Section 2: Subscription Plans ──────────────────────────────
+            html.H3("Monthly Memberships", className='text-info mb-4', 
+                    style={'textAlign': 'center', 'fontFamily': "'DM Mono', monospace"}),
+            html.Div(style={'display': 'flex', 'gap': '20px', 'alignItems': 'stretch'}, children=[
 
                 # ── Basic ──────────────────────────────────────────────────
-                html.Div(className='plan-card', style={'display': 'flex', 'flexDirection': 'column'},
-                         children=[
-                    html.P("BASIC", className='plan-tier-label',
-                           style={'color': '#6b6b8a'}),
-                    html.Div(style={'marginBottom': '6px'}, children=[
-                        html.Span("Free", className='plan-price'),
+                html.Div(className='plan-card glass-card', style={'flex': '1', 'display': 'flex', 'flexDirection': 'column'}, children=[
+                    html.P("BASIC", className='plan-tier-label', style={'color': '#6b6b8a'}),
+                    html.Div(children=[html.Span("Free", className='plan-price')]),
+                    html.P("Basic tracking and limited models.", className='plan-desc'),
+                    html.Div(style={'flex': '1'}, children=[
+                        _feature_item("10 daily model credits", True),
+                        _feature_item("Standard Portfolio tracking", True),
+                        _feature_item("Live market data", False),
+                        _feature_item("Advanced Visuals", False),
                     ]),
-                    html.P("Get started with basic portfolio tracking.",
-                           className='plan-desc'),
-                    html.Div(style={'marginBottom': '28px', 'flex': '1'}, children=[
-                        html.Div(className='feature-item', children=[
-                            html.Span("✓", className='feature-check-yes'),
-                            html.Span("10 model calculations"),
-                        ]),
-                        html.Div(className='feature-item', children=[
-                            html.Span("✓", className='feature-check-yes'),
-                            html.Span("Basic portfolio tracking"),
-                        ]),
-                        html.Div(className='feature-item', children=[
-                            html.Span("✗", className='feature-check-no'),
-                            html.Span("Live market data"),
-                        ]),
-                        html.Div(className='feature-item', children=[
-                            html.Span("✗", className='feature-check-no'),
-                            html.Span("Advanced analytics"),
-                        ]),
-                    ]),
-                    html.Button("Current Plan", disabled=True,
-                                className='btn-upgrade btn-upgrade-disabled'),
+                    html.Button("Current Plan", disabled=True, className='btn-upgrade btn-upgrade-disabled'),
                 ]),
 
                 # ── Plus ───────────────────────────────────────────────────
-                html.Div(className='plan-card plan-card-featured',
-                         style={'display': 'flex', 'flexDirection': 'column'}, children=[
+                html.Div(className='plan-card glass-card plan-card-featured', style={'flex': '1', 'display': 'flex', 'flexDirection': 'column'}, children=[
                     html.Div("MOST POPULAR", className='plan-badge'),
-                    html.P("PLUS", className='plan-tier-label',
-                           style={'color': '#00d4aa'}),
-                    html.Div(style={'display': 'flex', 'alignItems': 'baseline', 'gap': '4px',
-                                    'marginBottom': '6px'}, children=[
-                        html.Span("$1", className='plan-price'),
+                    html.P("PLUS", className='plan-tier-label', style={'color': '#00d4aa'}),
+                    html.Div(style={'display': 'flex', 'alignItems': 'baseline', 'gap': '4px'}, children=[
+                        html.Span("$9", className='plan-price'),
                         html.Span("/mo", className='plan-price-unit'),
                     ]),
-                    html.P("Ideal for active traders needing real-time data.",
-                           className='plan-desc'),
-                    html.Div(style={'marginBottom': '28px', 'flex': '1'}, children=[
-                        html.Div(className='feature-item', children=[
-                            html.Span("✓", className='feature-check-yes'),
-                            html.Span("50 model calculations",
-                                      className='feature-item-highlighted'),
-                        ]),
-                        html.Div(className='feature-item', children=[
-                            html.Span("✓", className='feature-check-yes'),
-                            html.Span("Basic portfolio tracking"),
-                        ]),
-                        html.Div(className='feature-item', children=[
-                            html.Span("✓", className='feature-check-yes'),
-                            html.Span("Live market fetching",
-                                      className='feature-item-highlighted'),
-                        ]),
-                        html.Div(className='feature-item', children=[
-                            html.Span("✓", className='feature-check-yes'),
-                            html.Span("Priority execution",
-                                      className='feature-item-highlighted'),
-                        ]),
+                    html.P("Active trading with high daily limits.", className='plan-desc'),
+                    html.Div(style={'flex': '1'}, children=[
+                        _feature_item("100 daily credits", True, True),
+                        _feature_item("Live market fetching", True, True),
+                        _feature_item("Priority execution", True),
+                        _feature_item("Advanced Visuals (Locked)", True),
                     ]),
-                    html.Button("Upgrade to Plus →", id='btn-up-plus',
-                                className='btn-upgrade btn-upgrade-plus'),
+                    html.Button("Upgrade to Plus →", id='btn-up-plus', className='btn-upgrade btn-upgrade-plus'),
                 ]),
 
                 # ── Pro ────────────────────────────────────────────────────
-                html.Div(className='plan-card plan-card-pro',
-                         style={'display': 'flex', 'flexDirection': 'column'}, children=[
-                    html.P("PRO", className='plan-tier-label',
-                           style={'color': '#f5c542'}),
-                    html.Div(style={'display': 'flex', 'alignItems': 'baseline', 'gap': '4px',
-                                    'marginBottom': '6px'}, children=[
-                        html.Span("$2", className='plan-price'),
+                html.Div(className='plan-card glass-card plan-card-pro', style={'flex': '1', 'display': 'flex', 'flexDirection': 'column'}, children=[
+                    html.P("PRO", className='plan-tier-label', style={'color': '#f5c542'}),
+                    html.Div(style={'display': 'flex', 'alignItems': 'baseline', 'gap': '4px'}, children=[
+                        html.Span("$15", className='plan-price'),
                         html.Span("/mo", className='plan-price-unit'),
                     ]),
-                    html.P("For quant teams requiring the full institutional suite.",
-                           className='plan-desc'),
-                    html.Div(style={'marginBottom': '28px', 'flex': '1'}, children=[
-                        html.Div(className='feature-item', children=[
-                            html.Span("✓", className='feature-check-yes'),
-                            html.Span("100 model calculations",
-                                      className='feature-item-highlighted'),
-                        ]),
-                        html.Div(className='feature-item', children=[
-                            html.Span("✓", className='feature-check-yes'),
-                            html.Span("Live market fetching"),
-                        ]),
-                        html.Div(className='feature-item', children=[
-                            html.Span("✓", className='feature-check-yes'),
-                            html.Span("Advanced Greeks & options",
-                                      className='feature-item-highlighted'),
-                        ]),
-                        html.Div(className='feature-item', children=[
-                            html.Span("✓", className='feature-check-yes'),
-                            html.Span("Institutional data feeds",
-                                      className='feature-item-highlighted'),
-                        ]),
+                    html.P("Unlimited power for quant teams.", className='plan-desc'),
+                    html.Div(style={'flex': '1'}, children=[
+                        _feature_item("Unlimited credits", True, True),
+                        _feature_item("Visual Locks Removed", True, True),
+                        _feature_item("Advanced Greeks Engine", True, True),
+                        _feature_item("Institutional Analytics", True, True),
                     ]),
-                    html.Button("Upgrade to Pro →", id='btn-up-pro',
-                                className='btn-upgrade btn-upgrade-pro'),
+                    html.Button("Upgrade to Pro →", id='btn-up-pro', className='btn-upgrade btn-upgrade-pro'),
                 ]),
             ]),
 
             # ── Feedback Message ───────────────────────────────────────────
-            html.Div(id='upgrade-msg',
-                     style={'textAlign': 'center', 'marginTop': '32px',
-                            'minHeight': '24px', 'fontSize': '14px',
-                            'fontFamily': "'DM Mono', monospace"}),
+            html.Div(id='upgrade-msg', style={'textAlign': 'center', 'marginTop': '32px', 'minHeight': '24px'}),
 
-            html.P(
-                "All plans include 256-bit encryption and SOC 2 compliant infrastructure.",
-                className='subs-footer-note'
-            ),
+            html.P("Secure 256-bit encrypted transactions.", className='subs-footer-note', style={'textAlign': 'center', 'marginTop': '20px', 'color': '#555'}),
         ])
-    ]
-)
+    ])
 
+# ── Helper UI Components ──────────────────────────────────────────────────────
 
-# ── Callbacks (identical logic) ────────────────────────────────────────────────
+def _credit_bundle_card(name, credits, price, btn_id):
+    return dbc.Col(md=3, children=[
+        html.Div(className="glass-card p-4 text-center h-100", children=[
+            html.H5(name, className="text-muted small"),
+            html.H2(f"{credits} credits", className="text-neon",style={"font-size":"20px"}),
+            html.H4(f"${price}", className="text-white"),
+            dbc.Button(f"Buy Bundle", id=btn_id, color="success", className="w-100 mt-2 fw-bold")
+        ])
+    ])
+
+def _feature_item(text, available=True, highlight=False):
+    icon = "✓" if available else "✗"
+    color = "feature-check-yes" if available else "feature-check-no"
+    text_class = "feature-item-highlighted" if highlight else ""
+    return html.Div(className='feature-item', children=[
+        html.Span(icon, className=color),
+        html.Span(text, className=text_class),
+    ])
+
+# ── Callbacks ─────────────────────────────────────────────────────────────────
 
 @callback(
     Output('current-status-banner', 'children'),
@@ -160,104 +122,59 @@ def subscription_layout():
 )
 def load_status(username):
     if not username:
-        return html.Span(
-            "Please log in via the Portfolio tab to view your plan.",
-            style={'color': '#6b6b8a', 'fontFamily': "'DM Mono', monospace",
-                   'fontSize': '12px'}
-        )
+        return html.Span("Please log in to manage your subscription.", style={'color': '#6b6b8a'})
+    
     tier = engine.get_subscription_tier(username)
     uses = engine.get_remaining_uses(username)
-
-    tier_color = (
-        '#f5c542' if tier == 'Pro'  else
-        '#00d4aa' if tier == 'Plus' else
-        '#6b6b8a'
-    )
+    display_uses = "Unlimited" if uses == -1 else f"{uses} credits remaining"
+    
+    tier_color = '#f5c542' if tier == 'Pro' else '#00d4aa' if tier == 'Plus' else '#6b6b8a'
 
     return [
-        html.Span("●", style={'color': '#00d4aa', 'fontSize': '10px'}),
-        html.Span(f"{username}", style={'color': '#9090b0'}),
-        html.Span("·", style={'color': '#3d3d6b', 'margin': '0 4px'}),
-        html.Span("Plan: "),
+        html.Span(f"User: {username}", style={'color': '#9090b0', 'marginRight': '15px'}),
+        html.Span(f"Plan: "),
         html.Strong(tier, style={'color': tier_color}),
-        html.Span("·", style={'color': '#3d3d6b', 'margin': '0 8px'}),
-        html.Span("⚡"),
-        html.Strong(f" {uses} credits remaining", style={'color': '#4f8eff'}),
+        html.Span(" | ", style={'margin': '0 10px', 'color': '#333'}),
+        html.Strong(display_uses, style={'color': '#4f8eff'}),
     ]
 
-
 @callback(
-    [Output('upgrade-msg', 'children'),
-     Output('current-status-banner', 'children', allow_duplicate=True),
-     Output('session-user', 'data', allow_duplicate=True)],
-    [Input('btn-up-plus', 'n_clicks'), Input('btn-up-pro', 'n_clicks')],
+    Output('upgrade-msg', 'children'),
+    Output('current-status-banner', 'children', allow_duplicate=True),
+    [Input('btn-up-plus', 'n_clicks'), Input('btn-up-pro', 'n_clicks'),
+     Input('btn-buy-50', 'n_clicks'), Input('btn-buy-200', 'n_clicks'), Input('btn-buy-400', 'n_clicks')],
     State('session-user', 'data'),
     prevent_initial_call=True,
 )
-def handle_upgrade(plus_clicks, pro_clicks, username):
-    print(f"\n[DEBUG] Upgrade button clicked by user: '{username}'")
-
+def handle_purchases(plus, pro, b50, b200, b400, username):
     if not username:
-        print("[DEBUG] Blocked: No user logged in.")
-        return (
-            html.Span("⚠ Please log in via the Portfolio tab first.",
-                      style={'color': '#f5c542'}),
-            no_update,
-            no_update # <-- Added 3rd output
-        )
+        return html.Span("Login required.", style={'color': "#ff4f6d"}), no_update
 
     ctx = dash.callback_context
-    if not ctx.triggered:
-        return no_update, no_update, no_update # <-- Added 3rd output
+    btn_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    
+    success = False
+    msg = ""
 
-    btn_id   = ctx.triggered[0]['prop_id'].split('.')[0]
-    new_tier = "Plus" if btn_id == 'btn-up-plus' else "Pro"
-    print(f"[DEBUG] Attempting to upgrade to {new_tier}...")
-
-    try:
+    # Handle Subscriptions
+    if btn_id in ['btn-up-plus', 'btn-up-pro']:
+        new_tier = "Plus" if btn_id == 'btn-up-plus' else "Pro"
         success = engine.upgrade_subscription(username, new_tier)
-        print(f"[DEBUG] C++ engine returned: {success}")
+        msg = f"Upgraded to {new_tier}!"
 
-        if success:
-            uses       = engine.get_remaining_uses(username)
-            tier_color = '#00d4aa' if new_tier == 'Plus' else '#f5c542'
+    # Handle Credit Bundles
+    elif btn_id == 'btn-buy-50':
+        success = engine.buy_credit_bundle(username, 1)
+        msg = "Added 50 credits!"
+    elif btn_id == 'btn-buy-200':
+        success = engine.buy_credit_bundle(username, 3)
+        msg = "Added 200 credits!"
+    elif btn_id == 'btn-buy-400':
+        success = engine.buy_credit_bundle(username, 5)
+        msg = "Added 400 credits!"
 
-            new_banner = [
-                html.Span("●", style={'color': '#00d4aa', 'fontSize': '10px'}),
-                html.Span(f"{username}", style={'color': '#9090b0'}),
-                html.Span("·", style={'color': '#3d3d6b', 'margin': '0 4px'}),
-                html.Span("Plan: "),
-                html.Strong(new_tier, style={'color': tier_color}),
-                html.Span("·", style={'color': '#3d3d6b', 'margin': '0 8px'}),
-                html.Span("⚡"),
-                html.Strong(f" {uses} credits remaining", style={'color': '#4f8eff'}),
-            ]
-            return (
-                html.Span(f"✓ Successfully upgraded to {new_tier}!",
-                          style={'color': '#00d4aa'}),
-                new_banner,
-                no_update # <-- Added 3rd output
-            )
-        else:
-            return (
-                html.Span("Engine rejected the upgrade request.",
-                          style={'color': '#ff4f6d'}),
-                no_update,
-                no_update # <-- Added 3rd output
-            )
-
-    except AttributeError as e:
-        print(f"[DEBUG] CRITICAL AttributeError: {e}")
-        return (
-            html.Span("Python couldn't find the C++ upgrade function. Did you recompile?",
-                      style={'color': '#ff4f6d'}),
-            no_update,
-            no_update # <-- Added 3rd output
-        )
-    except Exception as e:
-        print(f"[DEBUG] DATABASE CRASH: {e}")
-        return (
-            html.Span(f"DB Error: {str(e)}", style={'color': '#ff4f6d'}),
-            no_update,
-            no_update # <-- Added 3rd output
-        )
+    if success:
+        # Refresh status banner
+        return html.Span(f"✓ {msg}", style={'color': '#00d4aa'}), load_status(username)
+    else:
+        return html.Span("Transaction failed. Check balance.", style={'color': '#ff4f6d'}), no_update

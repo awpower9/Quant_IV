@@ -244,10 +244,10 @@ def handle_login_register(btn_login, btn_register, user, pwd):
     if not ctx.triggered: return no_update, "", base_style
     btn_id = ctx.triggered[0]['prop_id'].split('.')[0]
 
-    if not user or not pwd: return no_update, "⚠ Missing fields.", {**base_style, 'color': C['red']}
+    if not user or not pwd: return no_update, "", {**base_style, 'color': C['red']}
     try:
         if btn_id == 'btn-register':
-            if engine.create_user(user, pwd, 700.0): return user, "✓ Account created.", {**base_style, 'color': C['green']}
+            if engine.create_user(user, pwd, 1000.0): return user, "✓ Account created.", {**base_style, 'color': C['green']}
             return no_update, "Username exists.", {**base_style, 'color': C['red']}
         elif btn_id == 'btn-login':
             if engine.authenticate_user(user, pwd): return user, "✓ Authenticated.", {**base_style, 'color': C['green']}
