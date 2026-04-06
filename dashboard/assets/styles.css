@@ -13,7 +13,7 @@ body {
         radial-gradient(at 100% 100%, rgba(0, 114, 255, 0.15) 0px, transparent 50%),
         radial-gradient(at 0% 100%, rgba(124, 58, 237, 0.1) 0px, transparent 50%),
         radial-gradient(circle at 50% 350%,rgba(212,72,237,0.5)65%,transparent 73.5%,rgb(240, 232, 232)73.5%,rgba(240,232,232)73.51%,rgba(212, 72, 237,0.5)73.8%,transparent 79.5%);
-;
+
     background-attachment: fixed;
     animation: gradientMove 20s ease infinite alternate;
     color: #e6edf3;
