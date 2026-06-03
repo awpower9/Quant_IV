@@ -180,6 +180,72 @@ class YahooFinanceProvider(MarketDataProvider):
                 f"Cannot compute historical vol for '{symbol}': {e}"
             ) from e
 
+    # ── Intraday History ─────────────────────────────────────────────────
+
+    def get_intraday_history(
+        self, symbol: str, interval: str = "1m", points: int = 500
+    ) -> list[dict]:
+        """Fetch historical intraday spot prices to seed the live chart."""
+        import urllib.request
+        import json
+        import ssl
+        from datetime import datetime
+
+        symbol = symbol.upper()
+        
+        # We query Yahoo Finance directly here because `yfinance`'s 1m history
+        # extraction can unpredictably hang/block natively on Windows.
+        # Use query1 and an unverified SSL context to bypass cert blocking
+        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?interval={interval}&range=5d"
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'})
+
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+
+        try:
+            raw_res = urllib.request.urlopen(req, context=ctx, timeout=10).read()
+            data = json.loads(raw_res)
+            
+            result = data.get('chart', {}).get('result', [])
+            if not result:
+                logger.warning(f"No intraday history found for '{symbol}'")
+                return []
+                
+            res_dict = result[0]
+            timestamps = res_dict.get('timestamp', [])
+            
+            indicators = res_dict.get('indicators', {}).get('quote', [{}])[0]
+            closes = indicators.get('close', [])
+            
+            if not timestamps or not closes:
+                return []
+
+            # Clean out missing data and pair up (timestamp, close)
+            valid_points = [
+                (ts, c) for ts, c in zip(timestamps, closes) 
+                if c is not None
+            ]
+
+            # Only take the last `points` rows
+            if len(valid_points) > points:
+                valid_points = valid_points[-points:]
+
+            history_data = []
+            for ts, spot_price in valid_points:
+                # Dashboard expects string "YYYY-MM-DD HH:MM:SS" local time
+                time_str = datetime.fromtimestamp(ts).strftime("%Y-%m-%d %H:%M:%S")
+                history_data.append({
+                    "time": time_str,
+                    "spot": float(spot_price)
+                })
+
+            return history_data
+
+        except Exception as e:
+            logger.error(f"Failed to fetch intraday history for {symbol} directly: {e}")
+            return []
+
     # ── Helpers ───────────────────────────────────────────────────────────
 
     @staticmethod

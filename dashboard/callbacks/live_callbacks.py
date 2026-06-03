@@ -139,36 +139,117 @@ def refresh_live_data(n_intervals, n_clicks, symbol, strike, expiry,
             ], className="table table-sm table-dark"),
         ]) if result.greeks else html.P("No Greeks available.")
 
-        # ── Update price history ─────────────────────────────────────
-        if price_history is None:
-            price_history = []
+        # ── Update / Seed price history ──────────────────────────────
+        
+        # Check if we need to seed history (Track button clicked OR history empty)
+        triggered = dash.callback_context.triggered
+        is_track_click = any(
+            t.get("prop_id", "") == "live-track-btn.n_clicks"
+            for t in triggered
+        ) if triggered else False
 
+        if is_track_click or not price_history:
+            price_history = []
+            try:
+                # Fetch 500 historical points
+                hist_points = _service.get_live_intraday_history(symbol, points=500)
+                for pt in hist_points:
+                    hist_spot = pt["spot"]
+                    # Evaluate historical option price using constant vol/rate
+                    hist_res = _pricer.price(
+                        model="bsm",
+                        spot=hist_spot,
+                        strike=strike,
+                        vol=quote.vol,
+                        rate=quote.rate,
+                        expiry=expiry,
+                        option_type=option_type,
+                    )
+                    price_history.append({
+                        "time": pt["time"],
+                        "spot": hist_spot,
+                        "option_price": hist_res.price,
+                    })
+            except Exception as e:
+                # If historical fetch fails, just start empty and we append live
+                pass
+            
+        # Append the new live tick
         price_history.append({
-            "time": datetime.now().strftime("%H:%M:%S"),
+            "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "spot": quote.spot,
             "option_price": result.price,
         })
-        # Keep last 60 data points (5 minutes at 5s intervals)
-        price_history = price_history[-60:]
+        
+        # Keep last 500 data points globally (supports both history and live polling)
+        price_history = price_history[-500:]
 
         # ── Price time series chart ──────────────────────────────────
         times = [p["time"] for p in price_history]
         spots = [p["spot"] for p in price_history]
 
+        # Calculate dynamic y-axis range to prevent 'tozeroy' fill from flattening the graph
+        min_spot = min(spots) if spots else 0
+        max_spot = max(spots) if spots else 0
+        y_padding = (max_spot - min_spot) * 0.2
+        if y_padding == 0:
+            y_padding = min_spot * 0.005
+            
+        y_min = max(0, min_spot - y_padding)
+        y_max = max_spot + y_padding
+
+        # Set up categorical tick marks so we don't display the huge dates on every tick, 
+        # but the underlying strings stay unique to avoid looping.
+        tick_indices = list(range(0, len(times), max(1, len(times)//15)))
+        tick_vals = [times[i] for i in tick_indices]
+        tick_text = [t[11:16] for t in tick_vals] # extract just HH:MM
+
         price_fig = go.Figure()
+        
+        # Add a subtle gradient fill below the line
         price_fig.add_trace(go.Scatter(
             x=times, y=spots,
-            mode="lines+markers",
+            mode="lines",
             name="Spot Price",
-            line=dict(color="#00d4ff", width=2),
-            marker=dict(size=4),
+            line=dict(color="#00E676", width=2.5, shape="spline", smoothing=1.3),
+            fill="tozeroy",
+            fillcolor="rgba(0, 230, 118, 0.05)",
+            hovertemplate="Time: %{x}<br>Spot: $%{y:.2f}<extra></extra>",
         ))
+
+        # Modern, minimalistic layout
         price_fig.update_layout(
-            title=f"{symbol} — Live Spot Price",
-            xaxis_title="Time",
-            yaxis_title="Price ($)",
+            title=dict(text=f"{symbol} Live Spot", font=dict(size=16, color="#E0E0E0")),
+            xaxis=dict(
+                type="category",
+                categoryorder="trace",
+                tickvals=tick_vals,
+                ticktext=tick_text,
+                showgrid=False, 
+                zeroline=False, 
+                showticklabels=True,
+                showline=False,
+                tickfont=dict(color="#666666"),
+            ),
+            yaxis=dict(
+                showgrid=True, 
+                gridcolor="rgba(255,255,255,0.05)",
+                zeroline=False,
+                showticklabels=True,
+                tickprefix="$",
+                tickformat=".2f",
+                tickfont=dict(color="#888888"),
+                side="right",
+                fixedrange=False,
+                range=[y_min, y_max],
+            ),
             template="plotly_dark",
-            height=350,
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            height=300,
+            margin=dict(l=10, r=40, t=40, b=20),
+            hovermode="x unified",
+            showlegend=False,
         )
 
         # ── Greeks vs spot chart ─────────────────────────────────────

@@ -47,7 +47,7 @@ def models_menu_layout() -> html.Div:
     """Create the model selection page layout."""
     return html.Div([
         dbc.Container([
-            html.H2("Multi-Model Pricer Selection", className="text-center mb-5 mt-3"),
+            html.H2("Multi-Model Pricer Selection", className="text-neon text-center mb-5 mt-3"),
             
             dbc.Row([
                 _model_card(
@@ -77,6 +77,20 @@ def models_menu_layout() -> html.Div:
                     "Stochastic simulation with Geometric Brownian Motion paths.",
                     ["Path-dependent options", "Highly customizable", "Computationally intensive"],
                     "/pricer?model=monte_carlo"
+                ),
+                _model_card(
+                    "Heston Model (Only for Pro Users)",
+                    "🌪️",
+                    "Stochastic volatility model with mean-reverting variance dynamics.",
+                    ["Volatility smile", "Correlated processes", "Characteristic function"],
+                    "/pricer?model=heston"
+                ),
+                _model_card(
+                    "Merton Jump-Diffusion (Only for Pro Users)",
+                    "🦢",
+                    "Jump-diffusion model capturing Black Swan crash events.",
+                    ["Fat tail pricing", "Poisson jump process", "Crash risk modeling"],
+                    "/pricer?model=merton"
                 ),
             ])
         ], className="py-4")

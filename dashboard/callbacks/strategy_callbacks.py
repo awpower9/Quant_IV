@@ -1,16 +1,25 @@
 """
 strategy_callbacks.py — Callbacks for the option strategy builder page.
+
+These callbacks link the Dash UI to the quantiv.analytics layer.
+They integrate with the C++ engine to manage user credits for visuals.
 """
 
 import dash
-from dash import html, dcc, Input, Output
+from dash import html, dcc, Input, Output, State
 import plotly.graph_objects as go
 
-from quantiv.analytics import StrategyBuilder
+from quantiv.analytics.strategy_builder import StrategyBuilder
+from quantiv.portfolio_engine import QuantivPortfolioEngine
+from quantiv.utils.formatting import format_price
 from quantiv.pricing import Pricer
 
+builder = StrategyBuilder()
+engine = QuantivPortfolioEngine()
 pricer = Pricer()
 
+
+# ── Dynamic Strategy Descriptions ─────────────────────────────────────────────
 STRATEGY_DESCRIPTIONS = {
     "straddle": r"""
 ### ⚖️ Long Straddle
@@ -79,80 +88,111 @@ A **Custom Strategy** is your ultimate sandbox. It allows you to arbitrarily mix
 """
 }
 
+
 @dash.callback(
     Output("strategy-payoff-chart", "figure"),
     Output("strategy-summary", "children"),
     Output("strategy-description-output", "children"),
-    Input("strategy-selector", "value"),
-    Input("strategy-spot", "value"),
-    Input("strategy-strike1", "value"),
-    Input("strategy-strike2", "value"),
-    Input("strategy-expiry", "value"),
+    Input("btn-calculate-strategy", "n_clicks"),     # <--- ONLY THIS TRIGGERS THE CALLBACK
+    State("strategy-selector", "value"),
+    State("strategy-spot", "value"),
+    State("strategy-strike1", "value"),
+    State("strategy-strike2", "value"),
+    State("strategy-expiry", "value"),
+    State("session-user", "data"),                   # <--- GETS THE LOGGED-IN USER
 )
-def update_strategy(strategy_type, spot, strike1, strike2, expiry):
-    """Update strategy payoff diagram."""
+def update_strategy(n_clicks, strategy_type, spot, strike1, strike2, expiry, username):
+    """Update strategy payoff diagram with paywall and credit checks."""
+    
+    fig = go.Figure()
+    desc_md = dcc.Markdown(STRATEGY_DESCRIPTIONS.get(strategy_type, ""), mathjax=True)
+    
+    # 1. Prevent calculation when the page first loads
+    if n_clicks is None:
+        fig.add_annotation(
+            text="Click 'Generate Payoff' to build strategy & view chart.", 
+            xref="paper", yref="paper", x=0.5, y=0.5, showarrow=False, 
+            font=dict(size=16, color="#94a3b8")
+        )
+        fig.update_layout(template="plotly_dark", height=500, xaxis=dict(visible=False), yaxis=dict(visible=False))
+        return fig, html.Div(), desc_md
+
+    # 2. Login Check
+    if not username:
+        fig.add_annotation(
+            text="🔒 Please log in via the Portfolio tab to view charts.", 
+            xref="paper", yref="paper", x=0.5, y=0.5, showarrow=False, 
+            font=dict(size=16, color="#ff4f6d")
+        )
+        fig.update_layout(template="plotly_dark", height=500, xaxis=dict(visible=False), yaxis=dict(visible=False))
+        return fig, html.Div(), desc_md
+        
+    # 3. Credit Check (Deducts 1 credit automatically if true!)
+    if not engine.use_advanced_feature(username):
+        fig.add_annotation(
+            text="⚡ Out of credits! Please upgrade your plan to view charts.", 
+            xref="paper", yref="paper", x=0.5, y=0.5, showarrow=False, 
+            font=dict(size=16, color="#f5c542")
+        )
+        fig.update_layout(template="plotly_dark", height=500, xaxis=dict(visible=False), yaxis=dict(visible=False))
+        return fig, html.Div(), desc_md
+
+    # 4. Generate the actual chart if they passed the credit checks
     try:
-        # Get premiums from BSM pricer
-        call1 = pricer.price(model="bsm", spot=spot, strike=strike1,
-                             vol=0.2, rate=0.05, expiry=expiry,
-                             option_type="call")
-        put1 = pricer.price(model="bsm", spot=spot, strike=strike1,
-                            vol=0.2, rate=0.05, expiry=expiry,
-                            option_type="put")
-        call2 = pricer.price(model="bsm", spot=spot, strike=strike2,
-                             vol=0.2, rate=0.05, expiry=expiry,
-                             option_type="call")
+        # Get premiums from BSM pricer to construct the legs
+        call1 = pricer.price(model="bsm", spot=spot, strike=strike1, vol=0.2, rate=0.05, expiry=expiry, option_type="call")
+        put1 = pricer.price(model="bsm", spot=spot, strike=strike1, vol=0.2, rate=0.05, expiry=expiry, option_type="put")
+        call2 = pricer.price(model="bsm", spot=spot, strike=strike2, vol=0.2, rate=0.05, expiry=expiry, option_type="call")
 
+        # Build the requested strategy
         if strategy_type == "straddle":
-            strategy = StrategyBuilder.long_straddle(
-                strike1, expiry, call1.price, put1.price
-            )
+            strategy = StrategyBuilder.long_straddle(strike1, expiry, call1.price, put1.price)
         elif strategy_type == "bull_call":
-            strategy = StrategyBuilder.bull_call_spread(
-                strike1, strike2, expiry, call1.price, call2.price
-            )
+            strategy = StrategyBuilder.bull_call_spread(strike1, strike2, expiry, call1.price, call2.price)
+        elif strategy_type == "bear_put":
+            put2 = pricer.price(model="bsm", spot=spot, strike=strike2, vol=0.2, rate=0.05, expiry=expiry, option_type="put")
+            strategy = StrategyBuilder.bear_put_spread(strike1, strike2, expiry, put1.price, put2.price)
         else:
-            # Default to straddle for unsupported types
-            strategy = StrategyBuilder.long_straddle(
-                strike1, expiry, call1.price, put1.price
-            )
+            # Default fallback
+            strategy = StrategyBuilder.long_straddle(strike1, expiry, call1.price, put1.price)
 
+        # Compute the payoff curve array
         df = StrategyBuilder.compute_payoff(strategy, (spot * 0.5, spot * 1.5))
 
-        fig = go.Figure()
+        # Add the main curve
         fig.add_trace(go.Scatter(
-            x=df["spot"], y=df["profit"],
-            mode="lines", name="P&L at Expiry",
-            line=dict(color="#00d4ff", width=2),
+            x=df["spot"], y=df["profit"], 
+            mode="lines", name="P&L at Expiry", 
+            line=dict(color="#00d4ff", width=2)
         ))
+        
+        # Add visual markers (Zero-line and Current Spot)
         fig.add_hline(y=0, line_dash="dash", line_color="gray")
-        fig.add_vline(x=spot, line_dash="dash", line_color="yellow",
-                      annotation_text="Current Spot")
+        fig.add_vline(x=spot, line_dash="dash", line_color="yellow", annotation_text="Current Spot")
 
+        # Format the chart
         fig.update_layout(
-            title=f"{strategy.name} — P&L at Expiry",
-            xaxis_title="Spot Price at Expiry ($)",
-            yaxis_title="Profit/Loss ($)",
-            template="plotly_dark",
-            height=500,
+            title=f"{strategy.name} — P&L at Expiry", 
+            xaxis_title="Spot Price at Expiry ($)", 
+            yaxis_title="Profit/Loss ($)", 
+            template="plotly_dark", 
+            height=500
         )
 
+        # Build the HTML summary of the exact legs used
         summary = html.Div([
             html.H5(strategy.name),
             html.Ul([
-                html.Li(f"{'Long' if l.position == 'long' else 'Short'} "
-                        f"{l.option_type.capitalize()} @ K={l.strike:.0f}, "
-                        f"Premium=${l.premium:.2f}")
+                html.Li(f"{'Long' if l.position == 'long' else 'Short'} {l.option_type.capitalize()} @ K={l.strike:.0f}, Premium=${l.premium:.2f}") 
                 for l in strategy.legs
             ]),
         ])
-        
-        desc_md = dcc.Markdown(STRATEGY_DESCRIPTIONS.get(strategy_type, ""), mathjax=True)
 
         return fig, summary, desc_md
 
     except Exception as e:
+        # Failsafe error rendering
         fig = go.Figure()
-        fig.add_annotation(text=f"Error: {e}", showarrow=False)
-        fig.update_layout(template="plotly_dark")
-        return fig, html.P(f"Error: {e}"), html.Div()
+        fig.add_annotation(text=f"Error computing strategy: {e}", showarrow=False, font=dict(color="#ff4f6d"))
+        fig.update_layout(template="plotly_dark", height=500, xaxis=dict(visible=False), yaxis=dict(visible=False))
+        return fig, html.P(f"Error: {e}", className="text-danger"), desc_md

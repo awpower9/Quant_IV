@@ -10,47 +10,85 @@
     --success: #3fb950;
 }
 
+/* 1. Deep Space Animated Background */
 body {
-    background-color: var(--bg-dark);
-    color: var(--text-primary);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh;
+    /* Deep Obsidian Base */
+    background-color: #05070a; 
+    /* Shifting Nebula Layers */
+    background-image: 
+        radial-gradient(at 5% 5%, rgba(237, 121, 12, 0.5) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(16, 83, 185, 0.1) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(0, 114, 255, 0.15) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(124, 58, 237, 0.1) 0px, transparent 50%),
+        radial-gradient(circle at 50% 350%,rgba(212,72,237,0.5)65%,transparent 73.5%,rgb(240, 232, 232)73.5%,rgba(240,232,232)73.51%,rgba(212, 72, 237,0.5)73.8%,transparent 79.5%);
+;
+    background-attachment: fixed;
+    animation: gradientMove 20s ease infinite alternate;
+    color: #e6edf3;
+    font-family: 'Inter', -apple-system, sans-serif;
+    overflow-x: hidden;
 }
 
-.card {
-    background-color: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 8px;
+/* Background Animation */
+@keyframes gradientMove {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
 }
 
-.navbar {
-    border-bottom: 1px solid var(--border);
+/* Subtle glowing nebula effect */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle at 80% 20%, rgba(0, 212, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 10% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
 }
 
-.text-success {
-    color: var(--success) !important;
+/* 2. Glassmorphism effect for all cards */
+.glass-card {
+    background: rgba(22, 27, 34, 0.7) !important;
+    backdrop-filter: blur(12px) saturate(160%);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 24px !important;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.shadow-sm {
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+.glass-card:hover {
+    border: 1px solid rgba(0, 212, 255, 0.4) !important;
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0, 212, 255, 0.15);
 }
 
-/* ── Slider customization ────────────────────────────────────────────────── */
-.rc-slider-track {
-    background-color: var(--primary) !important;
+/* 3. Heavy Entry Animations */
+@keyframes slideReveal {
+    0% { opacity: 0; transform: translateY(40px) scale(0.95); filter: blur(10px); }
+    100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
 }
 
-.rc-slider-handle {
-    border-color: var(--primary) !important;
+.animate-page {
+    animation: slideReveal 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
-/* ── Table styles ────────────────────────────────────────────────────────── */
-.table-dark {
-    --bs-table-bg: transparent;
+/* 4. Neon Accents */
+.text-neon {
+    color: #00d4ff;
+    text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
 }
 
-.table-dark th {
-    color: var(--primary);
-    font-weight: 600;
+.btn-calculate {
+    background: linear-gradient(135deg, #00d4ff 0%, #0072ff 100%) !important;
+    border: none !important;
+    border-radius: 12px !important;
+    font-weight: bold !important;
+    transition: transform 0.2s ease;
 }
 
 /* ── Model Compare Page ──────────────────────────────────────────────────── */
@@ -147,4 +185,62 @@ body {
 .mc-table td {
     vertical-align: middle;
     font-size: 0.95rem;
+}
+
+.btn-calculate:active {
+    transform: scale(0.95);
+}
+
+/* Staggered Fade-In for Home Cards */
+.bento-reveal {
+    opacity: 0;
+    animation: slideReveal 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* Add delays for each card so they pop in one by one */
+.delay-1 { animation-delay: 0.2s; }
+.delay-2 { animation-delay: 0.4s; }
+.delay-3 { animation-delay: 0.6s; }
+.delay-4 { animation-delay: 0.8s; }
+.delay-5 { animation-delay: 1.0s; }
+.delay-6 { animation-delay: 1.2s; }
+.delay-7 { animation-delay: 1.4s; }
+
+/* Glowing Home Title */
+.hero-title {
+    font-size: 5rem;
+    background: linear-gradient(to right, #00d4ff, #10b981);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 15px rgba(218, 230, 232, 0.3));
+}
+
+.glass-nav {
+    background: rgba(22, 27, 34, 0.7) !important;
+    backdrop-filter: blur(12px) saturate(160%);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 24px !important;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.glass-nav:hover {
+    border: 1px solid rgba(0, 212, 255, 0.4) !important;
+    box-shadow: 0 12px 40px rgba(0, 212, 255, 0.15);
+}
+
+.glass-cards {
+    background: rgba(22, 27, 34,1) !important;
+    backdrop-filter: blur(1px) saturate(160%);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 24px !important;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.glass-cards:hover {
+    border: 1px solid rgba(0, 212, 255, 0.4) !important;
+    box-shadow: 0 12px 40px rgba(0, 212, 255, 0.15);
 }

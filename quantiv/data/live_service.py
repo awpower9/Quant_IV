@@ -191,6 +191,16 @@ class LiveMarketService:
 
         return self._fetch_rate()
 
+    def get_live_intraday_history(self, symbol: str, points: int = 500) -> list[dict]:
+        """
+        Fetch intraday historical prices to seed the live chart.
+        Does not cache this data as it's meant for initial load only.
+        """
+        try:
+            return self._provider.get_intraday_history(symbol, points=points)
+        except Exception:
+            return []
+
     @property
     def status(self) -> DataStatus:
         """Current data feed status."""

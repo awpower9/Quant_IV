@@ -12,7 +12,7 @@ from dash import html, dcc
 def live_layout() -> html.Div:
     """Create the live pricing page layout."""
     return html.Div([
-        html.H2("Live Market Pricing", className="mb-4"),
+        html.H2("Live Market Pricing", className="text-neon mb-4"),
 
         # ── Symbol Input + Status ────────────────────────────────────────
         dbc.Row([
@@ -42,7 +42,7 @@ def live_layout() -> html.Div:
                     switch=True,
                 ),
             ], md=4),
-        ], className="mb-4"),
+        ], className="glass-card mb-4"),
 
         # ── Auto-refresh interval ────────────────────────────────────────
         dcc.Interval(
@@ -62,7 +62,7 @@ def live_layout() -> html.Div:
                     html.Div(id="live-quote-content", children=[
                         html.P("Click 'Track' to start fetching live data."),
                     ]),
-                ]), className="shadow-sm mb-3"),
+                ]), className="glass-card mb-3"),
 
                 dbc.Card(dbc.CardBody([
                     html.H5("Live Greeks (BSM)", className="card-title"),
@@ -91,13 +91,13 @@ def live_layout() -> html.Div:
                     ),
                     html.Hr(),
                     html.Div(id="live-greeks-content"),
-                ]), className="shadow-sm"),
+                ]), className="glass-card"),
             ], md=4),
 
             # ── Right: Live charts ───────────────────────────────────────
             dbc.Col([
-                dcc.Graph(id="live-price-chart"),
-                dcc.Graph(id="live-greeks-chart"),
+                dcc.Graph(id="live-price-chart",className="glass-card mb-4"),
+                dcc.Graph(id="live-greeks-chart",className="glass-card"),
 
                 # Hidden store for price history
                 dcc.Store(id="live-price-history", data=[]),

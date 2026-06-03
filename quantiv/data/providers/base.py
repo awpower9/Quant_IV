@@ -94,6 +94,23 @@ class MarketDataProvider(ABC):
         """
         ...
 
+    @abstractmethod
+    def get_intraday_history(
+        self, symbol: str, interval: str = "1m", points: int = 500
+    ) -> list[dict]:
+        """
+        Fetch intraday historical spot prices to seed the live chart.
+
+        Args:
+            symbol: Ticker symbol.
+            interval: Bar interval (e.g., '1m', '5m').
+            points: Number of historical points to return.
+
+        Returns:
+            List of dictionaries: [{"time": "HH:MM:SS", "spot": 150.25}, ...]
+        """
+        ...
+
     # ── Convenience ──────────────────────────────────────────────────────
 
     def get_quote(self, symbol: str) -> MarketQuote:

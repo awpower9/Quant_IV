@@ -3,31 +3,55 @@ greeks_callbacks.py — Callbacks for the Greeks dashboard page.
 """
 
 import dash
-from dash import Input, Output, dcc
+from dash import Input, Output, State, dcc
 import plotly.graph_objects as go
 
 from quantiv.analytics import GreeksAnalyzer
+from quantiv.portfolio_engine import QuantivPortfolioEngine
 
 analyzer = GreeksAnalyzer()
+engine = QuantivPortfolioEngine()
 
 
 @dash.callback(
     Output("greeks-chart", "figure"),
-    Input("greeks-spot", "value"),
-    Input("greeks-strike", "value"),
-    Input("greeks-vol", "value"),
-    Input("greeks-rate", "value"),
-    Input("greeks-expiry", "value"),
-    Input("greeks-option-type", "value"),
-    Input("greeks-tabs", "active_tab"),
+    Input("btn-calculate-greeks", "n_clicks"),   # Trigger 1
+    Input("greeks-tabs", "active_tab"),          # Trigger 2 (Changing tabs re-calculates)
+    State("greeks-spot", "value"),
+    State("greeks-strike", "value"),
+    State("greeks-vol", "value"),
+    State("greeks-rate", "value"),
+    State("greeks-expiry", "value"),
+    State("greeks-option-type", "value"),
+    State("session-user", "data"),               # ---> NEW: Session
 )
-def update_greeks_chart(spot, strike, vol_pct, rate_pct, expiry,
-                        option_type, active_tab):
-    """Update the Greeks chart based on the selected tab."""
+def update_greeks_chart(n_clicks, active_tab, spot, strike, vol_pct, rate_pct, expiry, option_type, username):
+    """Update the Greeks chart based on the selected tab and deduct credits."""
+    
+    fig = go.Figure()
+    
+    # 1. Prevent calculation on page load
+    if n_clicks is None:
+        fig.add_annotation(text="Click 'Calculate' to generate Greek chart.", xref="paper", yref="paper", x=0.5, y=0.5, showarrow=False, font=dict(size=16, color="#94a3b8"))
+        fig.update_layout(template="plotly_dark", height=500, xaxis=dict(visible=False), yaxis=dict(visible=False))
+        return fig
+
+    # 2. Login Check
+    if not username:
+        fig.add_annotation(text="🔒 Please log in via the Portfolio tab to view charts.", xref="paper", yref="paper", x=0.5, y=0.5, showarrow=False, font=dict(size=16, color="#ff4f6d"))
+        fig.update_layout(template="plotly_dark", height=500, xaxis=dict(visible=False), yaxis=dict(visible=False))
+        return fig
+        
+    # 3. Credit Check
+    if not engine.use_advanced_feature(username):
+        fig.add_annotation(text="⚡ Out of credits! Please upgrade your plan to view charts.", xref="paper", yref="paper", x=0.5, y=0.5, showarrow=False, font=dict(size=16, color="#f5c542"))
+        fig.update_layout(template="plotly_dark", height=500, xaxis=dict(visible=False), yaxis=dict(visible=False))
+        return fig
+
+    # 4. Generate Chart
     try:
         vol = vol_pct / 100.0
         rate = rate_pct / 100.0
-
         spot_min = max(spot * 0.5, 1.0)
         spot_max = spot * 1.5
 
@@ -39,124 +63,86 @@ def update_greeks_chart(spot, strike, vol_pct, rate_pct, expiry,
 
         greek_name = active_tab.replace("-tab", "")
 
-        fig = go.Figure()
         if greek_name in df.columns:
             fig.add_trace(go.Scatter(
                 x=df["spot"], y=df[greek_name],
-                mode="lines",
-                name=greek_name.capitalize(),
+                mode="lines", name=greek_name.capitalize(),
                 line=dict(color="#00d4ff", width=2),
-                fill="tozeroy",
-                fillcolor="rgba(0, 212, 255, 0.1)",
+                fill="tozeroy", fillcolor="rgba(0, 212, 255, 0.1)",
             ))
 
-            # Mark current spot
-            fig.add_vline(x=spot, line_dash="dash", line_color="yellow",
-                          annotation_text="Current Spot")
+            fig.add_vline(x=spot, line_dash="dash", line_color="yellow", annotation_text="Current Spot")
 
         fig.update_layout(
             title=f"{greek_name.capitalize()} vs Spot Price",
-            xaxis_title="Spot Price ($)",
-            yaxis_title=greek_name.capitalize(),
-            template="plotly_dark",
-            height=500,
+            xaxis_title="Spot Price ($)", yaxis_title=greek_name.capitalize(),
+            template="plotly_dark", height=500,
         )
-
         return fig
 
     except Exception as e:
-        fig = go.Figure()
         fig.add_annotation(text=f"Error: {e}", showarrow=False)
         fig.update_layout(template="plotly_dark")
         return fig
 
 
-# ── Dynamic Greeks Dictionary ─────────────────────────────────────────────
+# ══════════════════════════════════════════════════════════════════════════════
+# GREEK DESCRIPTIONS
+# ══════════════════════════════════════════════════════════════════════════════
+
 GREEK_DESCRIPTIONS = {
-    "delta": r"""
-### ⨤ Delta ($\Delta$) : The Speedometer
-**Delta** is the option's "speed". It tells you exactly how much your option's price will dynamically change if the underlying stock moves by exactly $\$1.00$.
+    "delta": r'''
+### 🏎️ Delta ($\Delta$) — The Speedometer
 
-**Mathematical Definition:**
+Tells you exactly how much the option price will theoretically change if the underlying stock moves by precisely **$1.00**. 
 
-$$
-\Delta = \frac{\partial V}{\partial S}
-$$
+* **Intuition:** If you own an option with a Delta of 0.50, and the stock magically jumps up by $1 in the blink of an eye, your option will instantly gain $0.50 in value. 
+* **The Catch:** As the stock moves, your Delta will actively change. It's only a snapshot.
+* **Pro-Tip:** Traders also use Delta as a rough probability of the option expiring "In-The-Money". A 0.20 Delta option roughly has a 20% chance of being profitable at expiration.
+''',
+    "gamma": r'''
+### 🎢 Gamma ($\Gamma$) — The Acceleration
 
-For a European Call and Put under BSM:
+Tells you exactly how fast your Delta is changing. It is the core measurement of an option's pure **explosiveness**.
 
-$$
-\Delta_{call} = \Phi(d_1) \quad \text{and} \quad \Delta_{put} = \Phi(d_1) - 1
-$$
+* **Intuition:** If you're driving a car, Delta is your speed, and Gamma is your acceleration. If you slam on the gas pedal, you have high Gamma. 
+* **The Danger Zone:** Gamma violently spikes the closer you get to Expiration Day if the stock price is lingering exactly at your strike price. This causes the option price to wildly swing back and forth with every tick of the stock.
+''',
+    "vega": r'''
+### 🚨 Vega ($\mathcal{V}$) — The Panic Meter
 
-**Intuition:**
-* **The $\$1$ Rule:** If Delta is 0.60, and the stock price suddenly jumps up by $\$1$, your option will instantly become $\sim\$0.60$ more valuable. 
-* **The Odds Cheat-Code:** Traders constantly use Delta as a quick hack to guess the odds of winning. A Delta of 0.60 intuitively means the market broadly estimates there is a ~60% chance this option will successfully finish "In-The-Money".
-""",
-    "gamma": r"""
-### ℽ Gamma ($\Gamma$) : The Accelerator
-**Gamma** is the option's "acceleration". While Delta tells you your current cruising speed, Gamma tells you how aggressively your Speed is going to change if you step heavily on the gas pedal.
+Tells you how much the option price will mathematically spike or crash if implied volatility violently changes by **1%**.
 
-**Mathematical Definition:**
+* **Intuition:** Vega exists exclusively because of human emotion. Before a massive earnings report, traders panic and buy insurance, causing implied volatility to soar. If your Vega is high, just this *fear alone* will make your option incredibly expensive, even if the stock price hasn't moved a single inch!
+* **The "Crush":** The moment the earnings report happens and the mystery is gone, fear drops to zero. If you bought high-Vega options, you will be instantly obliterated by "IV Crush".
+''',
+    "theta": r'''
+### ⏳ Theta ($\Theta$) — The Bleeding Clock
 
-$$
-\Gamma = \frac{\partial^2 V}{\partial S^2} = \frac{\partial \Delta}{\partial S}
-$$
+Tells you exactly how much money your option is mathematically guaranteed to lose **every single day** just because time is passing.
 
-**Intuition:**
-* **The Speed Boost:** As the stock price moves higher, Gamma physically adds fuel to your Delta, making your option price move even faster!
-* **Dangerous Swings:** Gamma peaks powerfully when you are exactly "At-The-Money" and right about to expire. The option's price can violently whip back and forth, making it extremely dangerous for short sellers.
-""",
-    "vega": r"""
-### $\nu$ Vega ($\mathcal{V}$) : The Weather Forecast
-**Vega** acts like the market's "weather forecast". It measures exactly how sensitive your option is to sudden panic, fear, or excitement in the overall market (Implied Volatility).
+* **Intuition:** Options are like ice cubes melting on a hot sidewalk. When you buy an option, you are fighting a ticking clock. Theta tells you how fast it's melting.
+* **The Curve:** The bleeding doesn't happen evenly. If you have 2 years left, it melts very slowly. If you have 2 days left, it visibly evaporates before your eyes.
+''',
+    "rho": r'''
+### 🏦 Rho ($\rho$) — The Bank Rate
 
-**Mathematical Definition:**
+Tells you how much the option value changes if the Federal Reserve randomly raises interest rates by **1%**.
 
-$$
-\mathcal{V} = \frac{\partial V}{\partial \sigma}
-$$
-
-**Intuition:**
-* **Fear is Expensive:** If Vega is 0.15, and a sudden news scandal makes the stock market 1% more volatile (fear goes up), your option's price will instantly rise by roughly $\$0.15$ just because people are scrambling to buy insurance.
-* **Turtles vs Rabbits:** Vega is highest when you have months and months left until Expiration, because there is an immense amount of time for crazy market crashes to randomly happen.
-""",
-    "theta": r"""
-### $\Theta$ Theta ($\Theta$) : The Ticking Clock
-**Theta** is a brutal "fuel leak" built permanently into your option. Because options have an expiration date, they physically lose value every single day that safely passes without any drama.
-
-**Mathematical Definition:**
-
-$$
-\Theta = \frac{\partial V}{\partial t} = -\frac{\partial V}{\partial T}
-$$
-
-**Intuition:**
-* **The Daily Tax:** If your option's Theta is strictly `-0.05`, you will passively bleed $\$0.05$ of fundamental value every single market day, doing absolutely nothing!
-* **The Final Countdown:** This leak isn't perfectly steady. As you get horrifyingly close to Expiration Friday, Theta accelerates into a massive free-fall as the remaining time value physically evaporates into thin air.
-""",
-    "rho": r"""
-### $\rho$ Rho ($\rho$) : The Toll Booth
-**Rho** is the tiny background effect that the central macro risk-free interest rate (like Federal Treasury yields) has on your option's exact price.
-
-**Mathematical Definition:**
-
-$$
-\rho = \frac{\partial V}{\partial r}
-$$
-
-**Intuition:**
-* **Call Options love High Rates:** If Rho is $0.05$, a 1% localized hike in the primary federal interest rate will ironically cause your Call option's price to permanently rise by precisely $\$0.05$. 
-* Why? Because high interest rates mathematically heavily reduce the "future" cost of buying the physical stock later. Consequently, Put options actively lose value during high rates.
-"""
+* **Intuition:** It costs money to buy stock. Options give you a mathematical advantage because you control 100 shares for a fraction of the price, allowing you to leave the rest of your cash sitting safely in a high-yield bank account. The higher the bank's interest rate, the more valuable this "free cash" advantage gets.
+* **The Reality:** For 99% of options traded (expiring in less than 3 months), Rho is virtually zero and completely ignored by traders. It only really matters for multi-year options (LEAPS).
+'''
 }
 
 @dash.callback(
-    Output("greeks-description-output", "children"),
+    Output("greek-description-output", "children"),
     Input("greeks-tabs", "active_tab")
 )
 def update_greek_description(active_tab: str):
-    """Outputs dynamically parsed mathematical LaTeX markup per active tab focus."""
-    base_name = active_tab.replace("-tab", "")
-    desc = GREEK_DESCRIPTIONS.get(base_name, "Description not found.")
+    """Update the markdown formatted description based on the selected Greek tab."""
+    if not active_tab:
+        return dcc.Markdown("Select a Greek.", mathjax=True)
+    greek_id = active_tab.replace("-tab", "")
+    desc = GREEK_DESCRIPTIONS.get(greek_id, "Description not found.")
     return dcc.Markdown(desc, mathjax=True)
+

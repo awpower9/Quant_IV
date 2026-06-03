@@ -56,12 +56,12 @@ Now that you securely know the basics, head to the **Models** page. Play around 
 
     return html.Div([
         dbc.Container([
-            html.H1("Introduction to Options Trading", className="display-4 fw-bold mb-4 mt-3"),
+            html.H1("Introduction to Options Trading", className="text-neon display-4 fw-bold mb-4 mt-3"),
             dbc.Card([
                 dbc.CardBody([
                     dcc.Markdown(intro_markdown, mathjax=True)
                 ])
-            ], className="shadow-sm p-4 mb-5"),
+            ], className="glass-card p-4 mb-5"),
             
             html.Div([
                 dbc.Button("Start Pricing Models →", href="/models", color="primary", size="lg")

@@ -9,7 +9,7 @@ from dash import html, dcc
 def surface_layout() -> html.Div:
     """Create the volatility surface page layout."""
     return html.Div([
-        html.H2("Implied Volatility Surface", className="mb-4"),
+        html.H2("Implied Volatility Surface", className="text-neon mb-4"),
 
         dbc.Row([
             dbc.Col([
@@ -31,11 +31,15 @@ def surface_layout() -> html.Div:
                                     marks=None, tooltip={"placement": "bottom"}),
                     dbc.Button("Build Surface", id="surface-build-btn",
                                color="primary", className="mt-3 w-100"),
-                ]), className="shadow-sm"),
+                ]), className="glass-card"),
             ], md=3),
 
             dbc.Col([
-                dcc.Graph(id="surface-3d-chart", style={"height": "600px"}),
+                dcc.Graph(
+                   id="surface-3d-chart", 
+                   style={"height": "600px"}, 
+                    responsive=True,className="glass-card"
+                ),
             ], md=9),
         ]),
 
@@ -44,7 +48,7 @@ def surface_layout() -> html.Div:
         dbc.Row([
             dbc.Col([
                 dcc.Markdown(r"""
-### 🌊 Volatility Surface
+###  Volatility Surface
 
 The **Implied Volatility (IV) Surface** is a 3-dimensional plot that physically visualizes how expensive "fear" is across different **Strikes** (x-axis) and **Expiries** (y-axis). It perfectly proves that the real stock market is driven by human emotion, destroying the old Black-Scholes assumption that risk is totally constant!
 
@@ -63,5 +67,5 @@ $$
 * It correctly prices exotic derivatives that strictly rely on the entire probability distribution of the asset, not just an isolated volatility scalar.
                 """, mathjax=True)
             ], md=12)
-        ]),
+        ],className="glass-card",style={"width":"90%","margin":"0 auto"}),
     ])

@@ -61,6 +61,18 @@ class StrategyBuilder:
                 OptionLeg(upper_strike, expiry, "call", "short", 1, upper_premium),
             ],
         )
+    @staticmethod
+    def bear_put_spread(lower_strike: float, upper_strike: float,
+                        expiry: float, lower_premium: float,
+                        upper_premium: float) -> Strategy:
+        """Create a bear put spread: long upper-strike put + short lower-strike put."""
+        return Strategy(
+            name="Bear Put Spread",
+            legs=[
+                OptionLeg(upper_strike, expiry, "put", "long", 1, upper_premium),
+                OptionLeg(lower_strike, expiry, "put", "short", 1, lower_premium),
+            ],
+        )
 
     @staticmethod
     def compute_payoff(strategy: Strategy,

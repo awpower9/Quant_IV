@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+package quantiv.api;
+
+// Option Type and Exercise Style
+enum OptionType {
+  CALL = 0;
+  PUT = 1;
+}
+
+enum ExerciseStyle {
+  EUROPEAN = 0;
+  AMERICAN = 1;
+}
+
+// Data Structures
+message Option {
+  double strike = 1;
+  double expiry = 2;
+  OptionType option_type = 3;
+  ExerciseStyle exercise_style = 4;
+}
+
+message MarketData {
+  double spot = 1;
+  double vol = 2;
+  double rate = 3;
+  double dividend = 4;
+}
+
+// Greeks Map (using repeated messages to represent a map if needed, but protobuf map is better)
+message Greeks {
+  double delta = 1;
+  double gamma = 2;
+  double vega = 3;
+  double theta = 4;
+  double rho = 5;
+}
+
+// Pricing Request/Response
+message PricingRequest {
+  Option option = 1;
+  MarketData market = 2;
+}
+
+message PricingResponse {
+  double price = 1;
+  Greeks greeks = 2;
+}
+
+// Advanced Pricing Requests
+message BinomialRequest {
+  Option option = 1;
+  MarketData market = 2;
+  int32 steps = 3;
+}
+
+message MertonRequest {
+  Option option = 1;
+  MarketData market = 2;
+  double lamb = 3;
+  double mu_j = 4;
+  double sigma_j = 5;
+}
+
+message HestonRequest {
+  Option option = 1;
+  MarketData market = 2;
+  double kappa = 3;
+  double theta = 4;
+  double vol_of_vol = 5;
+  double rho = 6;
+}
+
+// The Pricing Service
+service QuantivPricer {
+  rpc PriceBlackScholes(PricingRequest) returns (PricingResponse);
+  rpc PriceBinomial(BinomialRequest) returns (PricingResponse);
+  rpc PriceTrinomial(BinomialRequest) returns (PricingResponse); // Uses same request as binomial (steps)
+  rpc PriceMonteCarlo(BinomialRequest) returns (PricingResponse); // Uses same request (paths mapped to steps for simplicity or just use a specific one)
+  
+  // Advanced Models
+  rpc PriceMerton(MertonRequest) returns (PricingResponse);
+  rpc PriceHeston(HestonRequest) returns (PricingResponse);
+}

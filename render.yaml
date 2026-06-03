@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: quantiv-app
+    env: docker
+    plan: free # Render Free Instance Type
+    region: singapore # Optimized for India (closest to Mumbai)
+    dockerfilePath: Dockerfile
+    healthCheckPath: /
+    envVars:
+      - key: DB_HOST
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: DB_PORT
+        value: "5432"
+      - key: PYTHON_VERSION
+        value: "3.11.8"
