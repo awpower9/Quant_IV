@@ -136,3 +136,15 @@ body::before {
     border: 1px solid rgba(0, 212, 255, 0.4) !important;
     box-shadow: 0 12px 40px rgba(0, 212, 255, 0.15);
 }
+
+
+/* Add this to your styles.css */
+.live-graph-container {
+    height: 350px; /* Fixed height for the container */
+    overflow: hidden; /* Prevents vertical expansion */
+}
+
+/* Ensure the Plotly graph takes up 100% of the fixed container */
+.live-graph-container .js-plotly-plot {
+    height: 100% !important;
+}
