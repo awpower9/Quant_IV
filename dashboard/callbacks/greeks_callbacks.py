@@ -43,7 +43,7 @@ def update_greeks_chart(n_clicks, active_tab, spot, strike, vol_pct, rate_pct, e
         return fig
         
     # 3. Credit Check
-    if not engine.use_advanced_feature(username):
+    if False: # engine.use_advanced_feature(username):
         fig.add_annotation(text="⚡ Out of credits! Please upgrade your plan to view charts.", xref="paper", yref="paper", x=0.5, y=0.5, showarrow=False, font=dict(size=16, color="#f5c542"))
         fig.update_layout(template="plotly_dark", height=500, xaxis=dict(visible=False), yaxis=dict(visible=False))
         return fig
@@ -75,7 +75,7 @@ def update_greeks_chart(n_clicks, active_tab, spot, strike, vol_pct, rate_pct, e
 
         fig.update_layout(
             title=f"{greek_name.capitalize()} vs Spot Price",
-            xaxis_title="Spot Price ($)", yaxis_title=greek_name.capitalize(),
+            xaxis_title="Spot Price (₹)", yaxis_title=greek_name.capitalize(),
             template="plotly_dark", height=500,
         )
         return fig
@@ -94,9 +94,9 @@ GREEK_DESCRIPTIONS = {
     "delta": r'''
 ### 🏎️ Delta ($\Delta$) — The Speedometer
 
-Tells you exactly how much the option price will theoretically change if the underlying stock moves by precisely **$1.00**. 
+Tells you exactly how much the option price will theoretically change if the underlying stock moves by precisely **₹1.00**. 
 
-* **Intuition:** If you own an option with a Delta of 0.50, and the stock magically jumps up by $1 in the blink of an eye, your option will instantly gain $0.50 in value. 
+* **Intuition:** If you own an option with a Delta of 0.50, and the stock magically jumps up by ₹1 in the blink of an eye, your option will instantly gain ₹0.50 in value. 
 * **The Catch:** As the stock moves, your Delta will actively change. It's only a snapshot.
 * **Pro-Tip:** Traders also use Delta as a rough probability of the option expiring "In-The-Money". A 0.20 Delta option roughly has a 20% chance of being profitable at expiration.
 ''',

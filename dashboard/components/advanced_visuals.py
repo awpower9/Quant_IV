@@ -103,7 +103,7 @@ def get_merton_pdf_comparison(params=None):
 
     fig.update_layout(
         title=dict(text="Distribution of Asset Prices at Expiry: BS vs Merton", font=dict(color="#E0E0E0", size=16)),
-        xaxis_title="Asset Price at Expiry ($)",
+        xaxis_title="Asset Price at Expiry (₹)",
         yaxis_title="Probability Density",
         template="plotly_dark",
         paper_bgcolor="rgba(0,0,0,0)",

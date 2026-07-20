@@ -40,6 +40,17 @@ def surface_layout() -> html.Div:
                    style={"height": "600px"}, 
                     responsive=True,className="glass-card"
                 ),
+                html.Div(
+                    [
+                        dbc.Button("Generate AI Risk Report", id="generate-risk-report-btn", color="secondary", className="mt-3 mb-2"),
+                        dcc.Loading(
+                            id="loading-risk-report",
+                            type="circle",
+                            children=html.Div(id="risk-report-output", className="p-3 glass-card mt-2", style={"minHeight": "100px", "display": "none"})
+                        )
+                    ],
+                    className="mt-4"
+                )
             ], md=9),
         ]),
 
@@ -53,7 +64,7 @@ def surface_layout() -> html.Div:
 The **Implied Volatility (IV) Surface** is a 3-dimensional plot that physically visualizes how expensive "fear" is across different **Strikes** (x-axis) and **Expiries** (y-axis). It perfectly proves that the real stock market is driven by human emotion, destroying the old Black-Scholes assumption that risk is totally constant!
 
 **Key Intuitions:**
-* **Volatility Smile/Smirk (The Crash Premium):** In a perfectly calm math world, a $150 strike and $100 strike have the exact same volatility. But in the real world, investors are absolutely terrified of sudden 2008-style market crashes. Because of this deep panic, they happily overpay massive premiums for far Out-Of-The-Money Puts (crash insurance). When you beautifully plot this fear out, it visually graphs as a heavy, lopsided "smirk" skewed entirely towards lower prices!
+* **Volatility Smile/Smirk (The Crash Premium):** In a perfectly calm math world, a ₹150 strike and ₹100 strike have the exact same volatility. But in the real world, investors are absolutely terrified of sudden 2008-style market crashes. Because of this deep panic, they happily overpay massive premiums for far Out-Of-The-Money Puts (crash insurance). When you beautifully plot this fear out, it visually graphs as a heavy, lopsided "smirk" skewed entirely towards lower prices!
 * **Term Structure (The Time Curve):** Volatility also violently changes depending on how far out into the future you look. If a company is reporting high-stakes earnings tomorrow, the short-term 1-week volatility explodes! But if you look 2 full years safely into the future, things smooth back out to a calm historical average.
 
 **Mathematical Representation:**

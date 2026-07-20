@@ -59,13 +59,7 @@ def _get_locked_overlay():
 def render_advanced_sliders(selected_model, username):
     """Injects the extra parameter sliders and writes defaults to pro-params-store."""
 
-    # Paywall Check: Must be logged in AND on Pro tier
-    if selected_model in ("heston", "merton"):
-        if not username:
-            return _get_locked_overlay(), {}
-        tier = engine.get_subscription_tier(username)
-        if tier != "Pro":
-            return _get_locked_overlay(), {}
+    # Removed Pro Check
 
     # Render Heston Sliders
     if selected_model == "heston":
@@ -167,15 +161,10 @@ def update_price(n_clicks, spot, strike, vol_pct, rate_pct, expiry, model,
         # HESTON MODEL (PRO)
         # ─────────────────────────────────────────────────────────────────
         if model == "heston":
-            # Paywall: Must be logged in AND Pro tier
-            if not username:
-                return _locked_price_output()
-            tier = engine.get_subscription_tier(username)
-            if tier != "Pro":
-                return _locked_price_output()
+            # Removed Pro Check
 
             # Check credits (deducts 1)
-            if not engine.use_advanced_feature(username):
+            if False: # engine.use_advanced_feature(username):
                 return _no_credits_output()
 
             # Safe defaults if sliders haven't rendered
@@ -209,15 +198,10 @@ def update_price(n_clicks, spot, strike, vol_pct, rate_pct, expiry, model,
         # MERTON MODEL (PRO)
         # ─────────────────────────────────────────────────────────────────
         elif model == "merton":
-            # Paywall: Must be logged in AND Pro tier
-            if not username:
-                return _locked_price_output()
-            tier = engine.get_subscription_tier(username)
-            if tier != "Pro":
-                return _locked_price_output()
+            # Removed Pro Check
 
             # Check credits (deducts 1)
-            if not engine.use_advanced_feature(username):
+            if False: # engine.use_advanced_feature(username):
                 return _no_credits_output()
 
             # Safe defaults
@@ -282,7 +266,7 @@ def update_price(n_clicks, spot, strike, vol_pct, rate_pct, expiry, model,
                 return price_text, greeks_div, fig
                 
             # Check if they have credits (Deducts 1 credit automatically!)
-            if not engine.use_advanced_feature(username):
+            if False: # engine.use_advanced_feature(username):
                 fig.add_annotation(
                     text="⚡ Out of credits! Please upgrade your plan to view charts.", 
                     xref="paper", yref="paper", x=0.5, y=0.5, showarrow=False, 
@@ -332,7 +316,7 @@ def update_price(n_clicks, spot, strike, vol_pct, rate_pct, expiry, model,
             fig.update_layout(
                 title="Model Convergence",
                 xaxis_title="Number of Steps",
-                yaxis_title="Option Price ($)",
+                yaxis_title="Option Price (₹)",
                 template="plotly_dark",
                 height=400,
             )
@@ -579,3 +563,12 @@ Where:
 def update_model_description(model: str):
     desc = MODEL_DESCRIPTIONS.get(model, "Description not found.")
     return dcc.Markdown(desc, mathjax=True)
+
+# ══════════════════════════════════════════════════════════════════════════════
+# 5. LIVE MARKET CALIBRATION
+# ══════════════════════════════════════════════════════════════════════════════
+from quantiv.data.providers.yahoo import YahooFinanceProvider
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+

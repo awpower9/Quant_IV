@@ -118,7 +118,7 @@ def get_portfolio_views(username):
                         live_val = res.price * p.quantity * 100
                         live_portfolio_val += live_val
                         pnl = live_val - invested
-                        pnl_str = f"-${abs(pnl):,.2f}" if pnl < 0 else f"+${pnl:,.2f}"
+                        pnl_str = f"-₹{abs(pnl):,.2f}" if pnl < 0 else f"+₹{pnl:,.2f}"
 
                         # Accumulate weighted Greeks (contracts are 100 shares each multiplier)
                         portfolio_delta += res.greeks.get('delta', 0.0) * p.quantity * 100
@@ -128,22 +128,22 @@ def get_portfolio_views(username):
 
                         processed_portfolio.append({
                             "Symbol": p.symbol, "Name": p.name, "Qty": p.quantity,
-                            "Avg Cost": f"${p.purchase_price:,.2f}",
-                            "Live Price": f"${res.price:,.2f}",
-                            "Current Value": f"${live_val:,.2f}",
+                            "Avg Cost": f"₹{p.purchase_price:,.2f}",
+                            "Live Price": f"₹{res.price:,.2f}",
+                            "Current Value": f"₹{live_val:,.2f}",
                             "PnL": pnl_str
                         })
                     except Exception as ex:
                         print(f"Error pricing option {p.symbol}: {ex}")
                         processed_portfolio.append({
                             "Symbol": p.symbol, "Name": p.name, "Qty": p.quantity,
-                            "Avg Cost": f"${p.purchase_price:,.2f}", "Live Price": "Error",
+                            "Avg Cost": f"₹{p.purchase_price:,.2f}", "Live Price": "Error",
                             "Current Value": "Error", "PnL": "Error"
                         })
                 else:
                     processed_portfolio.append({
                         "Symbol": p.symbol, "Name": p.name, "Qty": p.quantity,
-                        "Avg Cost": f"${p.purchase_price:,.2f}", "Live Price": "N/A",
+                        "Avg Cost": f"₹{p.purchase_price:,.2f}", "Live Price": "N/A",
                         "Current Value": "N/A", "PnL": "N/A"
                     })
             else:
@@ -156,21 +156,21 @@ def get_portfolio_views(username):
                     live_val = cp * p.quantity
                     live_portfolio_val += live_val
                     pnl = live_val - invested
-                    pnl_str = f"-${abs(pnl):,.2f}" if pnl < 0 else f"+${pnl:,.2f}"
+                    pnl_str = f"-₹{abs(pnl):,.2f}" if pnl < 0 else f"+₹{pnl:,.2f}"
                     
                     portfolio_delta += p.quantity  # Delta = 1.0 per share
                     
                     processed_portfolio.append({
                         "Symbol": p.symbol, "Name": p.name, "Qty": p.quantity,
-                        "Avg Cost": f"${p.purchase_price:,.2f}",
-                        "Live Price": f"${cp:,.2f}",
-                        "Current Value": f"${live_val:,.2f}",
+                        "Avg Cost": f"₹{p.purchase_price:,.2f}",
+                        "Live Price": f"₹{cp:,.2f}",
+                        "Current Value": f"₹{live_val:,.2f}",
                         "PnL": pnl_str
                     })
                 else:
                     processed_portfolio.append({
                         "Symbol": p.symbol, "Name": p.name, "Qty": p.quantity,
-                        "Avg Cost": f"${p.purchase_price:,.2f}", "Live Price": "N/A",
+                        "Avg Cost": f"₹{p.purchase_price:,.2f}", "Live Price": "N/A",
                         "Current Value": "N/A", "PnL": "N/A"
                     })
 
@@ -201,22 +201,22 @@ def get_portfolio_views(username):
     stats_children = [
         html.Div(className='glass-card', style={'flex': '1', 'padding': '25px'}, children=[
             html.P("Buying Power", style={'color': C['muted'], 'fontSize': '13px', 'textTransform': 'uppercase', 'margin': '0 0 10px 0'}),
-            html.H1(f"${cash:,.2f}", className='mono-text', style={'color': C['text'], 'margin': '0', 'fontSize': '30px'})
+            html.H1(f"₹{cash:,.2f}", className='mono-text', style={'color': C['text'], 'margin': '0', 'fontSize': '30px'})
         ]),
         html.Div(className='glass-card', style={'flex': '1', 'padding': '25px'}, children=[
             html.P("Total Invested", style={'color': C['muted'], 'fontSize': '13px', 'textTransform': 'uppercase', 'margin': '0 0 10px 0'}),
-            html.H1(f"${total_invested:,.2f}", className='mono-text', style={'color': C['gold'], 'margin': '0', 'fontSize': '30px'})
+            html.H1(f"₹{total_invested:,.2f}", className='mono-text', style={'color': C['gold'], 'margin': '0', 'fontSize': '30px'})
         ]),
         html.Div(className='glass-card', style={'flex': '1', 'padding': '25px'}, children=[
             html.P("Live Equity", style={'color': C['muted'], 'fontSize': '13px', 'textTransform': 'uppercase', 'margin': '0 0 10px 0'}),
-            html.H1(f"${live_equity:,.2f}", className='mono-text', style={'color': C['green'], 'margin': '0', 'fontSize': '30px'})
+            html.H1(f"₹{live_equity:,.2f}", className='mono-text', style={'color': C['green'], 'margin': '0', 'fontSize': '30px'})
         ])
     ]
 
     greeks_children = [
         html.Div(className='glass-card', style={'flex': '1', 'padding': '20px', 'borderLeft': f'4px solid {C["blue"]}'}, children=[
             html.P("Portfolio Delta ($ Delta)", style={'color': C['muted'], 'fontSize': '11px', 'textTransform': 'uppercase', 'margin': '0 0 5px 0'}),
-            html.H3(f"${portfolio_delta:,.2f}", className='mono-text', style={'color': C['text'], 'margin': '0', 'fontWeight': 'bold'})
+            html.H3(f"₹{portfolio_delta:,.2f}", className='mono-text', style={'color': C['text'], 'margin': '0', 'fontWeight': 'bold'})
         ]),
         html.Div(className='glass-card', style={'flex': '1', 'padding': '20px', 'borderLeft': f'4px solid {C["purple"]}'}, children=[
             html.P("Portfolio Gamma", style={'color': C['muted'], 'fontSize': '11px', 'textTransform': 'uppercase', 'margin': '0 0 5px 0'}),
@@ -224,11 +224,11 @@ def get_portfolio_views(username):
         ]),
         html.Div(className='glass-card', style={'flex': '1', 'padding': '20px', 'borderLeft': f'4px solid {C["gold"]}'}, children=[
             html.P("Portfolio Vega", style={'color': C['muted'], 'fontSize': '11px', 'textTransform': 'uppercase', 'margin': '0 0 5px 0'}),
-            html.H3(f"${portfolio_vega:,.2f}", className='mono-text', style={'color': C['text'], 'margin': '0', 'fontWeight': 'bold'})
+            html.H3(f"₹{portfolio_vega:,.2f}", className='mono-text', style={'color': C['text'], 'margin': '0', 'fontWeight': 'bold'})
         ]),
         html.Div(className='glass-card', style={'flex': '1', 'padding': '20px', 'borderLeft': f'4px solid {C["red"]}'}, children=[
             html.P("Portfolio Theta", style={'color': C['muted'], 'fontSize': '11px', 'textTransform': 'uppercase', 'margin': '0 0 5px 0'}),
-            html.H3(f"${portfolio_theta:,.2f}/day", className='mono-text', style={'color': C['text'], 'margin': '0', 'fontWeight': 'bold'})
+            html.H3(f"₹{portfolio_theta:,.2f}/day", className='mono-text', style={'color': C['text'], 'margin': '0', 'fontWeight': 'bold'})
         ])
     ]
 
@@ -277,7 +277,7 @@ def get_portfolio_views(username):
     fig.update_layout(
         title="Portfolio Shock Stress Test (Spot Price Shift)",
         xaxis_title="Underlying Spot Shock (%)",
-        yaxis_title="Estimated PnL ($)",
+        yaxis_title="Estimated PnL (₹)",
         template="plotly_dark",
         margin=dict(l=50, r=30, t=50, b=40),
         height=320,
@@ -353,7 +353,7 @@ def render_dashboard(username):
                     html.Label("Option Type", style={'color': C['muted'], 'fontSize': '11px', 'fontWeight': 'bold'}),
                     dcc.RadioItems(id='trade-opt-type', options=[{'label': ' Call  ', 'value': 'CALL'}, {'label': ' Put', 'value': 'PUT'}], value='CALL', inline=True, style={'marginBottom': '10px', 'color': C['text']}),
                     
-                    html.Label("Strike Price ($)", style={'color': C['muted'], 'fontSize': '11px', 'fontWeight': 'bold'}),
+                    html.Label("Strike Price (₹)", style={'color': C['muted'], 'fontSize': '11px', 'fontWeight': 'bold'}),
                     dcc.Input(id='trade-strike', type='number', value=100, className='modern-input', style={'width': '100%', 'padding': '8px', 'marginBottom': '10px'}),
                     
                     html.Label("Expiry (Years)", style={'color': C['muted'], 'fontSize': '11px', 'fontWeight': 'bold'}),
@@ -495,7 +495,7 @@ def fetch_live_data(n_clicks, asset_type, sym, opt_type, strike, expiry, vol):
                 model="bsm", spot=price, strike=strike, vol=vol_val,
                 rate=0.05, expiry=expiry, option_type=opt_type.lower()
             )
-            name = f"{sym.upper()} ${strike} {opt_type.capitalize()} (Exp: {expiry}y)"
+            name = f"{sym.upper()} ₹{strike} {opt_type.capitalize()} (Exp: {expiry}y)"
             return name, round(res.price, 2), f"✓ Option premium computed dynamically.", {'color': C['green']}
     except Exception as ex: 
         return "", "", f"Failed to fetch: {ex}", {'color': C['red']}

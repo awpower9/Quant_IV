@@ -63,6 +63,28 @@ def live_layout() -> html.Div:
                         html.P("Click 'Track' to start fetching live data."),
                     ]),
                 ]), className="glass-card mb-3"),
+                
+                # ── Live Auto-Calibration ──
+                html.Div(className="glass-card p-4 mb-3", style={"position": "relative", "zIndex": 9999}, children=[
+                    html.H5("Live Auto-Calibration", className="mb-3 text-info fw-bold"),
+                    
+                    html.Div(id="live-chain-container", style={"display": "none"}, children=[
+                        dbc.Row([
+                            dbc.Col([
+                                html.Label("Expiry", className="small text-muted"),
+                                dcc.Dropdown(id="pricer-chain-expiry", clearable=False, style={'color': '#000000'})
+                            ], width=6),
+                            dbc.Col([
+                                html.Label("Strike", className="small text-muted"),
+                                dcc.Dropdown(id="pricer-chain-strike", clearable=False, style={'color': '#000000'})
+                            ], width=6),
+                        ]),
+                        html.Div(id="live-chain-status", className="mt-2 small text-warning"),
+                        html.Div(id="live-chain-market-price", className="mt-2 h5 fw-bold text-success"),
+                        html.Div(id="live-chain-implied-vol", className="mt-2 h5 fw-bold text-info"),
+                        html.Div(id="live-chain-model-comparison", className="mt-3")
+                    ]),
+                ]),
 
                 dbc.Card(dbc.CardBody([
                     html.H5("Live Greeks (BSM)", className="card-title"),
@@ -97,10 +119,12 @@ def live_layout() -> html.Div:
             # ── Right: Live charts ───────────────────────────────────────
             dbc.Col([
                 dcc.Graph(id="live-price-chart",className="glass-card mb-4"),
-                dcc.Graph(id="live-greeks-chart",className="glass-card"),
+                dcc.Graph(id="live-greeks-chart",className="glass-card mb-4"),
+                dcc.Graph(id="pricer-convergence-chart",className="glass-card", config={'displayModeBar': False}),
 
                 # Hidden store for price history
                 dcc.Store(id="live-price-history", data=[]),
+                dcc.Store(id="live-chain-store", data=""),
             ], md=8),
         ]),
     ])

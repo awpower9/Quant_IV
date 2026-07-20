@@ -104,7 +104,7 @@ def model_compare_layout() -> html.Div:
                     html.H5("Option Parameters", className="mc-card-title"),
                     html.Hr(className="mc-hr"),
 
-                    html.Label("Strike Price ($)", className="mc-label"),
+                    html.Label("Strike Price (₹)", className="mc-label"),
                     dcc.Slider(
                         id="mc-strike", min=50, max=300,
                         value=175, step=1, marks=None,

@@ -68,14 +68,6 @@ def update_comparison_dashboard(n_clicks, spot, strike, vol_pct, rate_pct, expir
         return html.P("Adjust parameters and click 'Run Model Comparison' to begin analysis.", className="text-muted"), fig
 
     try:
-        # Paywall Check: Must be logged in AND on Pro tier
-        if not username:
-             return html.Div("🔒 Pro account required for Model Comparison.", className="text-danger"), go.Figure()
-        
-        tier = engine_core.get_subscription_tier(username)
-        if tier != "Pro":
-             return html.Div("🔒 Pro account required for Model Comparison.", className="text-danger"), go.Figure()
-
         # Extract and Validate Parameters
         vol = vol_pct / 100.0
         rate = rate_pct / 100.0
@@ -155,8 +147,8 @@ def update_comparison_dashboard(n_clicks, spot, strike, vol_pct, rate_pct, expir
             template="plotly_dark",
             margin=dict(l=20, r=20, t=40, b=20),
             height=450,
-            xaxis_title="Underlying Price ($)",
-            yaxis_title="Option Price ($)",
+            xaxis_title="Underlying Price (₹)",
+            yaxis_title="Option Price (₹)",
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
             paper_bgcolor="rgba(0,0,0,0)",
             plot_bgcolor="rgba(0,0,0,0)"

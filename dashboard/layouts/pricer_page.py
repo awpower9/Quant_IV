@@ -6,11 +6,13 @@ from dash import html, dcc
 from dashboard.components.parameter_panel import create_parameter_panel
 def pricer_layout(model: str = "bsm") -> html.Div:
     return html.Div(className="container-fluid p-4 animate-page", children=[
+        dcc.Store(id="pricer-chain-store"),
         html.H2("Options Pricing Terminal", className="text-neon mb-4 fw-bold"),
 
         dbc.Row([
             # Left Column: Inputs
             dbc.Col(md=4, children=[
+                # ── Market Parameters ──
                 html.Div(className="glass-card p-4", children=[
                     html.H5("Market Parameters", className="mb-4 text-muted"),
                     create_parameter_panel(id_prefix="pricer", default_model=model),

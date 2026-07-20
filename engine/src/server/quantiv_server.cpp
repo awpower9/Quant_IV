@@ -40,10 +40,22 @@ class QuantivPricerServiceImpl final : public QuantivPricer::Service {
         return CoreMarketData(mkt.spot(), mkt.vol(), mkt.rate(), mkt.dividend());
     }
 
+    void CopyGreeks(const quantiv::core::PricingResult& res, PricingResponse* response) {
+        if (!res.greeks.empty()) {
+            auto* greeks_pb = response->mutable_greeks();
+            if (res.greeks.count("delta")) greeks_pb->set_delta(res.greeks.at("delta"));
+            if (res.greeks.count("gamma")) greeks_pb->set_gamma(res.greeks.at("gamma"));
+            if (res.greeks.count("vega")) greeks_pb->set_vega(res.greeks.at("vega"));
+            if (res.greeks.count("theta")) greeks_pb->set_theta(res.greeks.at("theta"));
+            if (res.greeks.count("rho")) greeks_pb->set_rho(res.greeks.at("rho"));
+        }
+    }
+
     Status PriceBlackScholes(ServerContext* context, const PricingRequest* request, PricingResponse* response) override {
         quantiv::models::BlackScholes pricer;
         auto res = pricer.price(ToCoreOption(request->option()), ToCoreMarketData(request->market()));
         response->set_price(res.price);
+        CopyGreeks(res, response);
         return Status::OK;
     }
 
@@ -51,6 +63,7 @@ class QuantivPricerServiceImpl final : public QuantivPricer::Service {
         quantiv::models::Binomial pricer(request->steps());
         auto res = pricer.price(ToCoreOption(request->option()), ToCoreMarketData(request->market()));
         response->set_price(res.price);
+        CopyGreeks(res, response);
         return Status::OK;
     }
 
@@ -58,6 +71,7 @@ class QuantivPricerServiceImpl final : public QuantivPricer::Service {
         quantiv::models::Trinomial pricer(request->steps());
         auto res = pricer.price(ToCoreOption(request->option()), ToCoreMarketData(request->market()));
         response->set_price(res.price);
+        CopyGreeks(res, response);
         return Status::OK;
     }
 
@@ -65,6 +79,7 @@ class QuantivPricerServiceImpl final : public QuantivPricer::Service {
         quantiv::models::MonteCarlo pricer(request->steps()); 
         auto res = pricer.price(ToCoreOption(request->option()), ToCoreMarketData(request->market()));
         response->set_price(res.price);
+        CopyGreeks(res, response);
         return Status::OK;
     }
 
@@ -72,6 +87,7 @@ class QuantivPricerServiceImpl final : public QuantivPricer::Service {
         quantiv::models::ProEngine pricer;
         auto res = pricer.price_merton(ToCoreOption(request->option()), ToCoreMarketData(request->market()), request->lamb(), request->mu_j(), request->sigma_j());
         response->set_price(res.price);
+        CopyGreeks(res, response);
         return Status::OK;
     }
 
@@ -79,6 +95,7 @@ class QuantivPricerServiceImpl final : public QuantivPricer::Service {
         quantiv::models::ProEngine pricer;
         auto res = pricer.price_heston(ToCoreOption(request->option()), ToCoreMarketData(request->market()), request->kappa(), request->theta(), request->vol_of_vol(), request->rho());
         response->set_price(res.price);
+        CopyGreeks(res, response);
         return Status::OK;
     }
 };

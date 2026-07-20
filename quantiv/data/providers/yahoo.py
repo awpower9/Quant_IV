@@ -253,14 +253,26 @@ class YahooFinanceProvider(MarketDataProvider):
         row, years_to_expiry: float, option_type: str
     ) -> OptionContract:
         """Convert a yfinance DataFrame row to an OptionContract."""
+        import math
+        
+        def safe_int(val):
+            if val is None or math.isnan(float(val)):
+                return 0
+            return int(float(val))
+            
+        def safe_float(val):
+            if val is None or math.isnan(float(val)):
+                return 0.0
+            return float(val)
+
         return OptionContract(
-            strike=float(row.get("strike", 0)),
+            strike=safe_float(row.get("strike", 0)),
             expiry=years_to_expiry,
             option_type=option_type,
-            bid=float(row.get("bid", 0)),
-            ask=float(row.get("ask", 0)),
-            last=float(row.get("lastPrice", 0)),
-            volume=int(row.get("volume", 0) or 0),
-            open_interest=int(row.get("openInterest", 0) or 0),
-            implied_vol=float(row.get("impliedVolatility", 0) or 0),
+            bid=safe_float(row.get("bid", 0)),
+            ask=safe_float(row.get("ask", 0)),
+            last=safe_float(row.get("lastPrice", 0)),
+            volume=safe_int(row.get("volume", 0)),
+            open_interest=safe_int(row.get("openInterest", 0)),
+            implied_vol=safe_float(row.get("impliedVolatility", 0)),
         )

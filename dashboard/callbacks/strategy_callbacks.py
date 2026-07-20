@@ -56,7 +56,7 @@ A **Bear Put Spread** is a smart bearish strategy. You buy a Put option to aggre
 
 **Intuition:**
 * **The Cheaper Short:** You are moderately bearish on the stock, but buying a raw Put option is too pricey. You buy a Put to heavily profit from a downward sink, but instantly sell the lower Put to significantly reduce your upfront cash cost.
-* **The Floor:** This permanently caps your maximal profit if the stock tragically drops completely to $0 (since your sold Put acts as a floor), but massively increases your fundamental Return on Capital for highly probable, normal-sized moderate drops.
+* **The Floor:** This permanently caps your maximal profit if the stock tragically drops completely to ₹0 (since your sold Put acts as a floor), but massively increases your fundamental Return on Capital for highly probable, normal-sized moderate drops.
 
 **Mathematical Profile:**
 * **Max Profit:** Difference between Strikes minus the net premium paid: $(K_2 - K_1) - \text{Net Premium}$.
@@ -128,7 +128,7 @@ def update_strategy(n_clicks, strategy_type, spot, strike1, strike2, expiry, use
         return fig, html.Div(), desc_md
         
     # 3. Credit Check (Deducts 1 credit automatically if true!)
-    if not engine.use_advanced_feature(username):
+    if False: # engine.use_advanced_feature(username):
         fig.add_annotation(
             text="⚡ Out of credits! Please upgrade your plan to view charts.", 
             xref="paper", yref="paper", x=0.5, y=0.5, showarrow=False, 
@@ -173,8 +173,8 @@ def update_strategy(n_clicks, strategy_type, spot, strike1, strike2, expiry, use
         # Format the chart
         fig.update_layout(
             title=f"{strategy.name} — P&L at Expiry", 
-            xaxis_title="Spot Price at Expiry ($)", 
-            yaxis_title="Profit/Loss ($)", 
+            xaxis_title="Spot Price at Expiry (₹)", 
+            yaxis_title="Profit/Loss (₹)", 
             template="plotly_dark", 
             height=500
         )
@@ -183,7 +183,7 @@ def update_strategy(n_clicks, strategy_type, spot, strike1, strike2, expiry, use
         summary = html.Div([
             html.H5(strategy.name),
             html.Ul([
-                html.Li(f"{'Long' if l.position == 'long' else 'Short'} {l.option_type.capitalize()} @ K={l.strike:.0f}, Premium=${l.premium:.2f}") 
+                html.Li(f"{'Long' if l.position == 'long' else 'Short'} {l.option_type.capitalize()} @ K={l.strike:.0f}, Premium=₹{l.premium:.2f}") 
                 for l in strategy.legs
             ]),
         ])

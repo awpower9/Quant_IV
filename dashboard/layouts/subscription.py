@@ -55,7 +55,7 @@ def subscription_layout():
                     html.Div("MOST POPULAR", className='plan-badge'),
                     html.P("PLUS", className='plan-tier-label', style={'color': '#00d4aa'}),
                     html.Div(style={'display': 'flex', 'alignItems': 'baseline', 'gap': '4px'}, children=[
-                        html.Span("$9", className='plan-price'),
+                        html.Span("₹9", className='plan-price'),
                         html.Span("/mo", className='plan-price-unit'),
                     ]),
                     html.P("Active trading with high daily limits.", className='plan-desc'),
@@ -72,7 +72,7 @@ def subscription_layout():
                 html.Div(className='plan-card glass-card plan-card-pro', style={'flex': '1', 'display': 'flex', 'flexDirection': 'column'}, children=[
                     html.P("PRO", className='plan-tier-label', style={'color': '#f5c542'}),
                     html.Div(style={'display': 'flex', 'alignItems': 'baseline', 'gap': '4px'}, children=[
-                        html.Span("$15", className='plan-price'),
+                        html.Span("₹15", className='plan-price'),
                         html.Span("/mo", className='plan-price-unit'),
                     ]),
                     html.P("Unlimited power for quant teams.", className='plan-desc'),
@@ -100,7 +100,7 @@ def _credit_bundle_card(name, credits, price, btn_id):
         html.Div(className="glass-card p-4 text-center h-100", children=[
             html.H5(name, className="text-muted small"),
             html.H2(f"{credits} credits", className="text-neon",style={"font-size":"20px"}),
-            html.H4(f"${price}", className="text-white"),
+            html.H4(f"₹{price}", className="text-white"),
             dbc.Button(f"Buy Bundle", id=btn_id, color="success", className="w-100 mt-2 fw-bold")
         ])
     ])

@@ -55,6 +55,9 @@ setup(
         "grpcio>=1.50",
         "grpcio-tools>=1.50",
         "protobuf>=4.21",
+        "openai>=1.0.0",
+        "langchain>=0.1.0",
+        "langchain-openai>=0.1.0",
     ],
     extras_require={
         "dev": [

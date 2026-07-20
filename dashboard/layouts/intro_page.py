@@ -10,9 +10,9 @@ def intro_layout() -> html.Div:
     
     intro_markdown = """
 ## What is an Option?
-Imagine you want to buy a house that costs $500,000, but you need a few months to save up. You could pay the seller a $5,000 fee right now to buy the **"option"** to purchase the house at exactly $500,000 anytime in the next 3 months—no matter what happens to the overall housing market!
+Imagine you want to buy a house that costs ₹500,000, but you need a few months to save up. You could pay the seller a ₹5,000 fee right now to buy the **"option"** to purchase the house at exactly ₹500,000 anytime in the next 3 months—no matter what happens to the overall housing market!
 
-If house prices skyrocket to $600,000, you're thrilled! You still securely get to buy it for $500,000. If house prices crash to $400,000, you simply walk away and lose nothing except the $5,000 fee you paid upfront.
+If house prices skyrocket to ₹600,000, you're thrilled! You still securely get to buy it for ₹500,000. If house prices crash to ₹400,000, you simply walk away and lose nothing except the ₹5,000 fee you paid upfront.
 
 This is exactly how stock options work. An **Option** is a contract that gives you the *right* (but not the obligation) to buy or sell a stock at a locked-in price by a certain date.
 
@@ -23,14 +23,14 @@ There are two main types of options:
 ---
 
 ## The 5 Core Ingredients
-To figure out how much that $5,000 upfront "fee" (the option's price) should realistically cost, professional traders and mathematical algorithms use exactly 5 basic ingredients:
+To figure out how much that ₹5,000 upfront "fee" (the option's price) should realistically cost, professional traders and mathematical algorithms use exactly 5 basic ingredients:
 
 ### 1. Spot Price ($S_0$) - *Where are we now?*
-This is the current real-world market price of the stock right now. If Apple stock is trading at $150 today, the Spot Price is $150. Everything hinges on where this price moves.
+This is the current real-world market price of the stock right now. If Apple stock is trading at ₹150 today, the Spot Price is ₹150. Everything hinges on where this price moves.
 
 ### 2. Strike Price ($K$) - *Your Locked-In Deal*
 The **Strike Price** is the exact price you locked into your contract. 
-- If you own a **Call** with a $100 strike, you hold the golden ticket to buy the stock for $100, even if the real market price shoots to $1,000!
+- If you own a **Call** with a ₹100 strike, you hold the golden ticket to buy the stock for ₹100, even if the real market price shoots to ₹1,000!
 
 ### 3. Time to Expiry ($T$) - *The Ticking Clock*
 Options are exactly like milk; they have a strict expiration date. **Time to Expiry** is exactly how much time is left until your contract becomes completely worthless. The more time you have left, the more expensive the option is, because there's a higher runway for the stock price to do something crazy in your favor!
@@ -46,7 +46,7 @@ This is the completely safe interest rate you could get by just putting your cas
 ## "Moneyness" - Are we winning?
 Traders proudly use three simple terms to describe if an option is currently profitable:
 
-- **In-The-Money (ITM)**: You are currently winning! If you exercised your right right now, you would literally make money. For example, a Call option to buy at $100 when the stock is currently sitting at $120.
+- **In-The-Money (ITM)**: You are currently winning! If you exercised your right right now, you would literally make money. For example, a Call option to buy at ₹100 when the stock is currently sitting at ₹120.
 - **At-The-Money (ATM)**: The stock price is exactly equal to your locked-in Strike Price.
 - **Out-Of-The-Money (OTM)**: You are currently losing. If your option expired today, it would be completely worthless and you'd lose your upfront fee. 
 

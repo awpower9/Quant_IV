@@ -234,7 +234,7 @@ def _build_overlay_chart(model_history, symbol, option_type):
     fig.update_layout(
         title=f"{symbol} — Option Price ({option_type.capitalize()}) by Model",
         xaxis_title="Time",
-        yaxis_title="Option Price ($)",
+        yaxis_title="Option Price (₹)",
         template="plotly_dark",
         height=420,
         legend=dict(
@@ -268,7 +268,7 @@ def _build_spot_chart(spot_history, symbol):
     fig.update_layout(
         title=f"{symbol} — Spot Price",
         xaxis_title="Time",
-        yaxis_title="Price ($)",
+        yaxis_title="Price (₹)",
         template="plotly_dark",
         height=320,
         plot_bgcolor="rgba(0,0,0,0)",
@@ -319,7 +319,7 @@ def _build_spread_chart(model_history):
     fig.update_layout(
         title="Price Spread vs Black-Scholes",
         xaxis_title="Time",
-        yaxis_title="Spread ($)",
+        yaxis_title="Spread (₹)",
         template="plotly_dark",
         height=320,
         barmode="group",
@@ -385,8 +385,8 @@ def _build_strike_curves(quote, selected_models, expiry, option_type,
 
     fig.update_layout(
         title=f"Option Price vs Strike ({option_type.capitalize()})",
-        xaxis_title="Strike ($)",
-        yaxis_title="Option Price ($)",
+        xaxis_title="Strike (₹)",
+        yaxis_title="Option Price (₹)",
         template="plotly_dark",
         height=400,
         plot_bgcolor="rgba(0,0,0,0)",

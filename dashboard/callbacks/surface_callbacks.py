@@ -8,10 +8,13 @@ import numpy as np
 import plotly.graph_objects as go
 
 from quantiv.analytics.iv_surface import IVSurfaceBuilder
+from quantiv.analytics.risk_reporter import LLMRiskReporter
 from quantiv.portfolio_engine import QuantivPortfolioEngine
+from dash import html, dcc
 
 builder = IVSurfaceBuilder()
 engine = QuantivPortfolioEngine()
+risk_reporter = LLMRiskReporter()
 
 
 @dash.callback(
@@ -35,7 +38,7 @@ def build_surface(n_clicks, spot, rate_pct, strike_range, expiry_range, username
         fig.update_layout(template="plotly_dark", height=600, xaxis=dict(visible=False), yaxis=dict(visible=False))
         return fig
         
-    if not engine.use_advanced_feature(username):
+    if False: # engine.use_advanced_feature(username):
         fig.add_annotation(text="⚡ Out of credits! Please upgrade your plan to view 3D Surface.", xref="paper", yref="paper", x=0.5, y=0.5, showarrow=False, font=dict(size=16, color="#f5c542"))
         fig.update_layout(template="plotly_dark", height=600, xaxis=dict(visible=False), yaxis=dict(visible=False))
         return fig
@@ -60,7 +63,7 @@ def build_surface(n_clicks, spot, rate_pct, strike_range, expiry_range, username
 
         fig.update_layout(
             title="Implied Volatility Surface",
-            scene=dict(xaxis_title="Strike ($)", yaxis_title="Expiry (years)", zaxis_title="Implied Vol (%)"),
+            scene=dict(xaxis_title="Strike (₹)", yaxis_title="Expiry (years)", zaxis_title="Implied Vol (%)"),
             template="plotly_dark", height=600,
         )
         return fig
@@ -69,3 +72,38 @@ def build_surface(n_clicks, spot, rate_pct, strike_range, expiry_range, username
         fig.add_annotation(text=f"Error: {e}", showarrow=False)
         fig.update_layout(template="plotly_dark")
         return fig
+
+@dash.callback(
+    Output("risk-report-output", "children"),
+    Output("risk-report-output", "style"),
+    Input("generate-risk-report-btn", "n_clicks"),
+    State("surface-spot", "value"),
+    State("surface-rate", "value"),
+    State("surface-strike-range", "value"),
+    State("surface-expiry-range", "value"),
+    prevent_initial_call=True,
+)
+def generate_risk_report(n_clicks, spot, rate_pct, strike_range, expiry_range):
+    if not n_clicks:
+        return dash.no_update, dash.no_update
+        
+    try:
+        rate = rate_pct / 100.0
+        strikes = np.linspace(strike_range[0], strike_range[1], 20)
+        expiries = np.linspace(expiry_range[0], expiry_range[1], 15)
+
+        df = builder.build_surface(
+            spot=spot, rate=rate,
+            strikes=strikes.tolist(),
+            expiries=expiries.tolist(),
+        )
+        
+        report = risk_reporter.generate_surface_report(df, spot, rate)
+        
+        return dcc.Markdown(report), {"display": "block", "minHeight": "100px"}
+    except Exception as e:
+        return html.Div([
+            html.H5("Error generating report", className="text-danger"),
+            html.P(str(e))
+        ]), {"display": "block", "minHeight": "100px"}
+
